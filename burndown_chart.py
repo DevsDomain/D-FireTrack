@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # Configurações do GitHub
 GITHUB_REPO = "DevsDomain/D-FireTrack"  # Substitua pelo seu repositório
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+GITHUB_TOKEN = "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"
 
 # Verifica se o Token foi carregado corretamente
 if not GITHUB_TOKEN:
