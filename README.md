@@ -53,3 +53,8 @@ Scrum Master    | Claudia Nunes  |                              [![Linkedin Badg
 |   Dev Team    | Juliana Maciel   |                                               [![Linkedin Badge](https://img.shields.io/badge/Linkedin-blue?style=flat-square&logo=Linkedin&logoColor=white)](https://www.linkedin.com/in/juliana-maciel-manso) [![GitHub Badge](https://img.shields.io/badge/GitHub-111217?style=flat-square&logo=github&logoColor=white)](https://github.com/Jummanso)                                               |
 |   Dev Team    | Laura Gabriel   |                                               [![Linkedin Badge](https://img.shields.io/badge/Linkedin-blue?style=flat-square&logo=Linkedin&logoColor=white)]( https://www.linkedin.com/in/eulauragabriel/) [![GitHub Badge](https://img.shields.io/badge/GitHub-111217?style=flat-square&logo=github&logoColor=white)]( https://github.com/eulauragabriel)                                               |
 
+
+## 📊 Burndown Chart - Atualizado diariamente
+
+![Burndown Chart](burndown_chart.png)
+
