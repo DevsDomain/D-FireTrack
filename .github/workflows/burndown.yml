@@ -2,7 +2,7 @@ name: Generate Burndown Chart
 
 on:
   schedule:
-    - cron: "0 12 * * *"  # Roda todo dia ao meio-dia
+    - cron: "0 12 * * *"  # Roda todo dia ao meio-dia UTC
   workflow_dispatch:  # Permite rodar manualmente
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      
+
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -21,7 +21,7 @@ jobs:
         run: pip install matplotlib requests
 
       - name: Run script
-        run: python burndown_script.py
+        run: python burndown_chart.py
 
       - name: Commit and push chart
         run: |
