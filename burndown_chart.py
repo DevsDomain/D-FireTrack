@@ -3,8 +3,8 @@ import datetime
 import matplotlib.pyplot as plt
 
 # Configurações do GitHub
-GITHUB_REPO = "usuario/repositorio"  # Substitua pelo seu repositório
-GITHUB_TOKEN = "seu_token_de_acesso"  # Gere um token no GitHub (Settings > Developer Settings)
+GITHUB_REPO = "DevsDomain/D-FireTrack"  # Substitua pelo seu repositório
+GITHUB_TOKEN = "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"  # Gere um token no GitHub (Settings > Developer Settings)
 
 # Obtendo número de Issues abertas
 url = f"https://api.github.com/repos/{GITHUB_REPO}/issues?state=open"
