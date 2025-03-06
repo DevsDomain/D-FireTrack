@@ -1,0 +1,72 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "STAC API",
+    "version": "1.0.0",
+    "description": "API para buscar imagens usando STAC do INPE"
+  },
+  "paths": {
+    "/collections": {
+      "get": {
+        "summary": "Lista as coleções disponíveis",
+        "operationId": "getCollections",
+        "responses": {
+          "200": {
+            "description": "Lista de coleções",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "collections": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "summary": "Busca imagens usando STAC",
+        "operationId": "searchImages",
+        "parameters": [
+          {
+            "name": "bbox",
+            "in": "query",
+            "description": "Bounding box no formato minx,miny,maxx,maxy",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "datetime",
+            "in": "query",
+            "description": "Intervalo de tempo no formato YYYY-MM-DD/YYYY-MM-DD",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de imagens encontradas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "object" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
