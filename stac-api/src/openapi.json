@@ -32,36 +32,60 @@
     },
     "/search": {
       "get": {
-        "summary": "Busca imagens usando STAC",
-        "operationId": "searchImages",
+        "summary": "Busca itens no STAC",
         "parameters": [
+          {
+            "name": "collection",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Nome da coleção"
+          },
           {
             "name": "bbox",
             "in": "query",
-            "description": "Bounding box no formato minx,miny,maxx,maxy",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "array",
+              "items": { "type": "number" },
+              "example": [-60, -10, -50, -5]
+            },
+            "description": "Bounding Box no formato [minX, minY, maxX, maxY]"
           },
           {
             "name": "datetime",
             "in": "query",
-            "description": "Intervalo de tempo no formato YYYY-MM-DD/YYYY-MM-DD",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string",
+              "example": "2023-01-01/2023-12-31"
+            },
+            "description": "Intervalo de datas"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            },
+            "description": "Número máximo de itens a retornar"
           }
         ],
         "responses": {
           "200": {
-            "description": "Lista de imagens encontradas",
+            "description": "Lista de itens encontrados",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "images": {
-                      "type": "array",
-                      "items": { "type": "object" }
-                    }
-                  }
-                }
+                "example": { "features": [] }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro nos parâmetros",
+            "content": {
+              "application/json": {
+                "example": { "error": "Mensagem de erro" }
               }
             }
           }
