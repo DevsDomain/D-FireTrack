@@ -1,4 +1,5 @@
 import swaggerJSDoc from "swagger-jsdoc";
+import path from "path";
 
 const options = {
   definition: {
@@ -8,7 +9,7 @@ const options = {
       version: "1.0.0",
     },
   },
-  apis: ["./src/routes/*.ts"],
+  apis: [path.join(__dirname, "./routes/*.ts")], // Caminho absoluto
 };
 
 export const swaggerSpec = swaggerJSDoc(options);

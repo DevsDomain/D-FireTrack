@@ -5,9 +5,16 @@ import { swaggerSpec } from "./swagger";
 import collectionsRoutes from "./routes/collections";
 import searchRoutes from "./routes/search";
 import { errorHandler } from "./middleware/errorHandler";
+import fs from "fs";
+import path from "path";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const tempDir = path.join(__dirname, "../temp");
+if (!fs.existsSync(tempDir)) {
+  fs.mkdirSync(tempDir);
+}
 
 app.use(cors());
 app.use(express.json());
