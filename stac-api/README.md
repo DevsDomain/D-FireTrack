@@ -40,7 +40,7 @@ stac-api/
 ### **1️⃣ Clone o repositório:**
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/DevsDomain/D-FireTrack.git
 cd stac-api
 ```
 
