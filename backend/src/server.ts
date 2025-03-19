@@ -1,18 +1,8 @@
-import express from "express";
-import { connectDB } from './database';
+import { app } from "./index";
+import { env } from './env';
 
-connectDB();
-
-const app = express();
-const PORT = 3000;
-
-//inserir uma requisicao
-app.get("/", (req, res) => {
-  res.send("Hello, Backend com TypeScript!");
-});
-
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
-
-//FD
+app.listen(env.PORT, () =>
+  console.log(`Server is running on Port:${env.PORT}`))
+  .on("error", (err) => {
+    console.error("Error starting server", err)
+  })

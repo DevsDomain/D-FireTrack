@@ -1,9 +1,11 @@
-import { Router } from 'express';
-import ApontamentoAlteracao from '../controllers/apontamentoAlteracaoController';
 
-const router = Router();
+import ApontamentoAlteracao from '@/controllers/apontamentoAlteracaoController';
+import { Router } from 'express';
+
+const apontamentoRoute = Router();
+
 
 // Rota para obter todas as alterações
-router.get('/apontamentos/alteracoes', ApontamentoAlteracao.getAll);
+apontamentoRoute.get('/', ApontamentoAlteracao.getAll);
 
-export default router;
+export default apontamentoRoute;

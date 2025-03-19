@@ -1,18 +1,10 @@
-import express from 'express';
-import router from './routes/apontamento.routes'; // Corrigido o nome do arquivo
-import connect from './models/apontamentoAlteracaoModel';
+import express from 'express'
+import cors from 'cors'
+import { routes } from './routes/index.routes';
+import connect from './database/mongo';
 
-const PORT = 3008;
-const server = express();
-
-server.use(express.json());
-
-// Conectar ao banco de dados
+export const app = express();
 connect();
-
-// Usar as rotas corretamente
-server.use('/api', router); // Corrigido para usar o nome correto da importação
-
-server.listen(PORT, () => {
-    console.log(`Server Running at PORT: ${PORT}`);
-});
+app.use(cors())
+app.use(express.json());
+app.use("/api", routes);

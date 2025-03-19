@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import ApontamentoAlteracaoModel, { ApontamentoAlteracaoType } from '../models/apontamentoAlteracaoModel';
+import ApontamentoAlteracaoModel from '../models/apontamentoAlteracaoModel';
 
 class ApontamentoAlteracao {
     public async getAll(req: Request, res: Response): Promise<Response> {
