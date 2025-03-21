@@ -1,0 +1,23 @@
+.sidebar {
+  width: 250px;
+  background-color: #333;
+  color: white;
+  padding-top: 10px;
+  height: calc(100vh - 60px); /* Ocupa apenas o espaço abaixo do TopMenu */
+  position: fixed;
+  top: 60px; /* Começa abaixo do TopMenu */
+  left: 0;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+  padding: 10px 20px;
+}
+
+.sidebar-icon {
+  margin-right: 10px;
+  font-size: 1.5rem; /* Ajuste o tamanho conforme necessário */
+}

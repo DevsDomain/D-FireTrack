@@ -1,0 +1,60 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: black; /* Fundo preto */
+    overflow: auto !important; /* Certifica-se de que a rolagem está ativada */
+  }
+  
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+  }
+  
+  .page-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .leaflet-container {
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* Remove -1 para evitar problemas de exibição */
+  }
+  
+
+/* O TopMenu deve ocupar 100% da largura e estar fixo no topo */
+.top-menu {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+/* A área abaixo do TopMenu */
+.content {
+  display: flex;
+  flex-direction: row;
+  margin-top: 60px; /* Garante que o conteúdo abaixo comece depois do TopMenu */
+  height: calc(100vh - 60px);
+}
+
+/* Ajusta o conteúdo principal para ocupar o espaço ao lado do Sidebar */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  margin-left: 250px; /* Deixa espaço para o Sidebar */
+}
+
+/* O sidebar ocupa apenas a altura restante */
+.sidebar {
+  width: 250px;
+  background-color: #2D2F39;
+  color: white;
+  padding-top: 10px;
+  height: 100%;
+}
