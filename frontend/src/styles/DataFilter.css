@@ -83,3 +83,11 @@
     color: #92a4b6;
     text-align: center;
   }
+
+  .coord-display {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f0f4ff;
+    border-radius: 6px;
+    font-size: 14px;
+  }

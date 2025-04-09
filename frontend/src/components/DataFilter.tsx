@@ -1,11 +1,13 @@
+// src/components/DateFilter.tsx
 import React, { useState, useEffect } from 'react';
 import '../styles/DataFilter.css';
 
 interface DateFilterProps {
   onDateChange: (dates: [Date | null, Date | null]) => void;
+  mousePosition?: { lat: number; lng: number } | null;
 }
 
-const DateFilter: React.FC<DateFilterProps> = ({ onDateChange }) => {
+const DateFilter: React.FC<DateFilterProps> = ({ onDateChange, mousePosition }) => {
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
   const [sensorImages, setSensorImages] = useState<string[]>([]);
@@ -52,6 +54,13 @@ const DateFilter: React.FC<DateFilterProps> = ({ onDateChange }) => {
           />
         </div>
       </div>
+
+      {mousePosition && (
+        <div className="coord-display">
+          <p><strong>Latitude:</strong> {mousePosition.lat.toFixed(5)}</p>
+          <p><strong>Longitude:</strong> {mousePosition.lng.toFixed(5)}</p>
+        </div>
+      )}
 
       <div className="image-container">
         <h3 className="image-title">Imagens do Sensor WFI</h3>
