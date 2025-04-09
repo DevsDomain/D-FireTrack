@@ -1,5 +1,4 @@
-// src/components/Map.tsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -8,6 +7,7 @@ import {
   LayersControl,
   useMapEvents,
   useMap,
+  ImageOverlay,
 } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -25,6 +25,8 @@ interface MapProps {
 }
 
 const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange }) => {
+  const [satelliteImage, setSatelliteImage] = useState<string | null>(null);
+
   const markerIcon = new L.Icon({
     iconUrl: require('../assets/images.jpeg'),
     iconSize: [32, 32],
@@ -52,8 +54,27 @@ const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange })
     return null;
   };
 
+  useEffect(() => {
+    const fetchSatelliteImage = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/search?collection=S2-16D-2&bbox=-54.0,-25.0,-44.0,-19.0&datetime=2023-01-01/2023-12-31&limit=10`
+        );
+        const data = await response.json();
+        if (data.features && data.features.length > 0) {
+          const thumbnails = data.features.map((feature: any) => feature.assets.thumbnail.href);
+          setSatelliteImage(thumbnails[0]);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar imagem de satélite:', error);
+      }
+    };
+
+    fetchSatelliteImage();
+}, [selectedDates]);
+
   return (
-    <MapContainer center={[0, -50]} zoom={2} style={{ width: '100vw', height: '100vh' }}>
+    <MapContainer center={[-23.55052, -46.633308]} zoom={10} style={{ width: '100vw', height: '100vh' }}>
       <MouseTracker />
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
@@ -88,6 +109,17 @@ const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange })
           />
         </LayersControl.Overlay>
       </LayersControl>
+
+      {satelliteImage && (
+        <ImageOverlay
+          url={satelliteImage}
+          bounds={[
+            [-23.65, -46.75], 
+            [-23.45, -46.55], 
+          ]}
+          opacity={0.7}
+        />
+      )}
 
       <Marker position={[-23.55052, -46.633308]} icon={markerIcon}>
         <Popup>São Paulo</Popup>
