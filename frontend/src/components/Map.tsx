@@ -63,7 +63,7 @@ const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange })
     const fetchSatelliteImage = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/search?collection=S2-16D-2&bbox=-47.0,-24.0,-45.0,-23.0&datetime=2023-01-01/2023-12-31&limit=10`
+          `http://localhost:3000/search?collection=S2-16D-2&bbox=-46.0,-23.5,-45.5,-22.8&datetime=2023-01-01/2023-12-31&limit=10`
         );
         const data = await response.json();
   
@@ -93,12 +93,12 @@ const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange })
   
     fetchSatelliteImage();
   }, [selectedDates]);
-
+  
   return (
-    <MapContainer center={[-23.55052, -46.633308]} zoom={10} style={{ width: '100vw', height: '100vh' }}>
+    <MapContainer center={[-23.1896, -45.8841]} zoom={10} style={{ width: '100vw', height: '100vh' }}>
       <MouseTracker />
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
+  
       <LayersControl position="topright">
         <LayersControl.Overlay checked name="Satélite Amazônia (INPE)">
           <WMSTileLayer
@@ -109,7 +109,7 @@ const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange })
             opacity={0.6}
           />
         </LayersControl.Overlay>
-
+  
         <LayersControl.Overlay name="Satélite Cybers 4">
           <WMSTileLayer
             url="https://cybers4.example.com/wms?"
@@ -119,7 +119,7 @@ const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange })
             opacity={0.5}
           />
         </LayersControl.Overlay>
-
+  
         <LayersControl.Overlay name="Satélite Cybers 4A">
           <WMSTileLayer
             url="https://cybers4a.example.com/wms?"
@@ -130,20 +130,20 @@ const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange })
           />
         </LayersControl.Overlay>
       </LayersControl>
-
+  
       {satelliteImage && (
-        <ImageOverlay
-          url={satelliteImage.url}
-          bounds={satelliteImage.bounds}
-          opacity={0.7}
-        />
+          <ImageOverlay
+            url={satelliteImage.url}
+            bounds={satelliteImage.bounds}
+            opacity={0.7}
+          />
       )}
-
-      <Marker position={[-23.55052, -46.633308]} icon={markerIcon}>
-        <Popup>São Paulo</Popup>
+  
+      <Marker position={[-23.1896, -45.8841]} icon={markerIcon}>
+        <Popup>São José dos Campos</Popup>
       </Marker>
     </MapContainer>
   );
-};
+}
 
 export default Map;
