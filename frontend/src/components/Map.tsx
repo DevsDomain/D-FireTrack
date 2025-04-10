@@ -24,11 +24,16 @@ interface MapProps {
   }) => void;
 }
 
+interface SatelliteImage {
+  url: string;
+  bounds: [[number, number], [number, number]];
+}
+
 const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange }) => {
-  const [satelliteImage, setSatelliteImage] = useState<string | null>(null);
+  const [satelliteImage, setSatelliteImage] = useState<SatelliteImage | null>(null);
 
   const markerIcon = new L.Icon({
-    iconUrl: require('../assets/images.jpeg'),
+    iconUrl: require('../assets/images.png'),
     iconSize: [32, 32],
     iconAnchor: [16, 32],
     popupAnchor: [0, -32],
@@ -58,20 +63,36 @@ const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange })
     const fetchSatelliteImage = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/search?collection=S2-16D-2&bbox=-54.0,-25.0,-44.0,-19.0&datetime=2023-01-01/2023-12-31&limit=10`
+          `http://localhost:3000/search?collection=S2-16D-2&bbox=-47.0,-24.0,-45.0,-23.0&datetime=2023-01-01/2023-12-31&limit=10`
         );
         const data = await response.json();
+  
         if (data.features && data.features.length > 0) {
-          const thumbnails = data.features.map((feature: any) => feature.assets.thumbnail.href);
-          setSatelliteImage(thumbnails[0]);
+          const firstFeature = data.features[0];
+          const thumbnail = firstFeature.assets?.thumbnail?.href;
+          const bbox = firstFeature.bbox;
+  
+          if (thumbnail && bbox) {
+            setSatelliteImage({
+              url: thumbnail,
+              bounds: [
+                [bbox[1], bbox[0]], // [minLat, minLon]
+                [bbox[3], bbox[2]], // [maxLat, maxLon]
+              ],
+            });
+          } else {
+            console.warn("Dados incompletos na resposta da API:", firstFeature);
+          }
+        } else {
+          console.warn("Nenhuma feature encontrada na resposta da API.");
         }
       } catch (error) {
-        console.error('Erro ao buscar imagem de satélite:', error);
+        console.error("Erro ao buscar imagem de satélite:", error);
       }
     };
-
+  
     fetchSatelliteImage();
-}, [selectedDates]);
+  }, [selectedDates]);
 
   return (
     <MapContainer center={[-23.55052, -46.633308]} zoom={10} style={{ width: '100vw', height: '100vh' }}>
@@ -112,11 +133,8 @@ const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange })
 
       {satelliteImage && (
         <ImageOverlay
-          url={satelliteImage}
-          bounds={[
-            [-23.65, -46.75], 
-            [-23.45, -46.55], 
-          ]}
+          url={satelliteImage.url}
+          bounds={satelliteImage.bounds}
           opacity={0.7}
         />
       )}
