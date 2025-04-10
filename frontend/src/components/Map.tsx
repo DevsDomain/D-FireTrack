@@ -76,8 +76,8 @@ const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange })
             setSatelliteImage({
               url: thumbnail,
               bounds: [
-                [bbox[1], bbox[0]], // [minLat, minLon]
-                [bbox[3], bbox[2]], // [maxLat, maxLon]
+                [bbox[1], bbox[0]],
+                [bbox[3], bbox[2]],
               ],
             });
           } else {
@@ -135,7 +135,7 @@ const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange })
           <ImageOverlay
             url={satelliteImage.url}
             bounds={satelliteImage.bounds}
-            opacity={0.7}
+            opacity={0.85}
           />
       )}
   
