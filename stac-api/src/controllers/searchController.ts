@@ -63,30 +63,24 @@ export const downloadImage = async (
     const { collection, itemId, band } = req.query;
 
     if (!collection || typeof collection !== "string") {
-      res
-        .status(400)
-        .json({
-          error: "O parâmetro 'collection' é obrigatório e deve ser uma string",
-        });
+      res.status(400).json({
+        error: "O parâmetro 'collection' é obrigatório e deve ser uma string",
+      });
       return;
     }
 
     if (!itemId || typeof itemId !== "string") {
-      res
-        .status(400)
-        .json({
-          error: "O parâmetro 'itemId' é obrigatório e deve ser uma string",
-        });
+      res.status(400).json({
+        error: "O parâmetro 'itemId' é obrigatório e deve ser uma string",
+      });
       return;
     }
 
     if (!band || typeof band !== "string") {
-      res
-        .status(400)
-        .json({
-          error:
-            "O parâmetro 'band' é obrigatório e deve ser uma string. Exemplo: B02, B08, thumbnail",
-        });
+      res.status(400).json({
+        error:
+          "O parâmetro 'band' é obrigatório e deve ser uma string. Exemplo: B02, B08, thumbnail",
+      });
       return;
     }
 
@@ -98,13 +92,11 @@ export const downloadImage = async (
 
     // Verifica se a banda solicitada existe na resposta
     if (!data.assets || !data.assets[band]) {
-      res
-        .status(404)
-        .json({
-          error: `Banda '${band}' não encontrada no item '${itemId}'. Bandas disponíveis: ${Object.keys(
-            data.assets
-          ).join(", ")}`,
-        });
+      res.status(404).json({
+        error: `Banda '${band}' não encontrada no item '${itemId}'. Bandas disponíveis: ${Object.keys(
+          data.assets
+        ).join(", ")}`,
+      });
       return;
     }
 
@@ -118,8 +110,9 @@ export const downloadImage = async (
     // Obtém a extensão do arquivo
     const ext = path.extname(imageUrl).split("?")[0] || ".tif";
 
-    // Define um nome de arquivo temporário
-    const fileName = `downloaded_image_${band}${ext}`;
+    // Define um nome de arquivo temporário com o itemId e a banda
+    //const sanitizedItemId = itemId.replace(/[^\w\-]/g, "_"); // evita caracteres problemáticos
+    const fileName = `${itemId}_${band}${ext}`;
     const filePath = path.join(__dirname, "../../temp", fileName);
 
     // Salva a imagem temporariamente
