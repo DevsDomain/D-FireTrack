@@ -57,8 +57,20 @@ export async function searchItems(req: Request, res: Response): Promise<void> {
 
   try {
     const items = await stacService.search(searchParams);
+    // Inclui thumbnailUrl diretamente em cada item
+    const parsedItems = items.map((item: any) => ({
+      ...item,
+      thumbnailUrl: item.assets?.thumbnail?.href,
+    }));
+
     console.log("✅ Itens encontrados:", items);
-    res.json({ features: items });
+    console.log(
+      "✅ Thumbnails extraídos:",
+      parsedItems.map((i) => i.thumbnailUrl)
+    );
+
+    // Retorna apenas os itens já processados com thumbnailUrl
+    res.json({ features: parsedItems });
   } catch (error) {
     console.error("❌ Erro ao buscar itens da coleção:", collection, error);
     res.status(500).json({
