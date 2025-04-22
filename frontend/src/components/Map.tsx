@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -8,10 +8,10 @@ import {
   useMapEvents,
   useMap,
   ImageOverlay,
-} from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import { WMSTileLayer } from 'react-leaflet';
+} from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { WMSTileLayer } from "react-leaflet";
 
 interface MapProps {
   selectedDates: [Date | null, Date | null];
@@ -29,11 +29,17 @@ interface SatelliteImage {
   bounds: [[number, number], [number, number]];
 }
 
-const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange }) => {
-  const [satelliteImage, setSatelliteImage] = useState<SatelliteImage | null>(null);
+const Map: React.FC<MapProps> = ({
+  selectedDates,
+  onMouseMove,
+  onBoundsChange,
+}) => {
+  const [satelliteImage, setSatelliteImage] = useState<SatelliteImage | null>(
+    null
+  );
 
   const markerIcon = new L.Icon({
-    iconUrl: require('../assets/images.png'),
+    iconUrl: require("../assets/images.png"),
     iconSize: [32, 32],
     iconAnchor: [16, 32],
     popupAnchor: [0, -32],
@@ -95,7 +101,11 @@ const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange })
   }, [selectedDates]);
 
   return (
-    <MapContainer center={[-23.1896, -45.8841]} zoom={10} style={{ width: '100vw', height: '100vh' }}>
+    <MapContainer
+      center={[-23.1896, -45.8841]}
+      zoom={10}
+      style={{ width: "100vw", height: "100vh" }}
+    >
       <MouseTracker />
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
@@ -109,7 +119,6 @@ const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange })
             opacity={0.6}
           />
         </LayersControl.Overlay>
-
       </LayersControl>
 
       {satelliteImage && (
@@ -125,6 +134,6 @@ const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange })
       </Marker>
     </MapContainer>
   );
-}
+};
 
 export default Map;
