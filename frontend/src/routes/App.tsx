@@ -13,7 +13,7 @@ const App: React.FC = () => {
   const mockParams = {
     collection: "CB4-WFI-L4-SR-1",
     bbox: "-47.9,-21.3,-47.5,-20.9",
-    datetime: "2024-03-01/2024-08-31",
+    datetime: "2024-03-01/2024-12-31",
   };
 
   const handleSelect = (selectedIds: string[]) => {
