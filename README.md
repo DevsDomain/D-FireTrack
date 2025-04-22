@@ -3,7 +3,7 @@
 ## :memo: Desafio
 Este projeto tem como objetivo o desenvolvimento de uma solução completa (API, aplicação web) para o mapeamento automático de cicatrizes de queimadas utilizando imagens do sensor WFI a bordo dos satélites CBERS4, CBERS4A e Amazônia 1. O projeto será desenvolvido com base em técnicas de Deep Learning e processamento em nuvem.
  
-## 🖥️ Protótipo Navegavel Figama
+## 🖥️ Protótipo Navegavel Figma
 ![Prototipo_Figma](https://github.com/user-attachments/assets/a31bfa27-72ec-432b-a0a2-b32b16ee8c0b)
 
 
