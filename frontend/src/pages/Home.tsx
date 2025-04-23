@@ -5,19 +5,13 @@ import Map from '../components/Map';
 const Home = () => {
   const [selectedDates, setSelectedDates] = useState<[Date | null, Date | null]>([null, null]);
   const [mousePosition, setMousePosition] = useState<{ lat: number; lng: number } | null>(null);
-  const [bounds, setBounds] = useState<{
-    north: number;
-    south: number;
-    east: number;
-    west: number;
-  } | null>(null);
 
   return (
     <div
       className="page-container"
       style={{ position: 'relative', height: '100vh', width: '100%' }}
     >
-      {bounds && (
+      {mousePosition && (
         <div
           style={{
             position: 'absolute',
@@ -32,16 +26,10 @@ const Home = () => {
           }}
         >
           <div>
-            <strong>Norte:</strong> {bounds.north.toFixed(5)}
+            <strong>Latitude:</strong> {mousePosition.lat.toFixed(5)}
           </div>
           <div>
-            <strong>Sul:</strong> {bounds.south.toFixed(5)}
-          </div>
-          <div>
-            <strong>Leste:</strong> {bounds.east.toFixed(5)}
-          </div>
-          <div>
-            <strong>Oeste:</strong> {bounds.west.toFixed(5)}
+            <strong>Longitude:</strong> {mousePosition.lng.toFixed(5)}
           </div>
         </div>
       )}
@@ -49,7 +37,6 @@ const Home = () => {
       <Map
         selectedDates={selectedDates}
         onMouseMove={setMousePosition}
-        onBoundsChange={setBounds}
       />
     </div>
   );
