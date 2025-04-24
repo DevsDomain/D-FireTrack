@@ -1,6 +1,6 @@
 import { Router } from "express";
-import apontamentoRoute from "./apontamento.routes";
+import downloadImageRoute from "./downloadImage.routes";
 
 export const routes = Router()
 
-routes.use("/apontamento", apontamentoRoute);
+routes.use("/", downloadImageRoute);
