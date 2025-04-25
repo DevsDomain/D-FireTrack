@@ -10,7 +10,7 @@ export const buscarImagens = async (
   collection: string,
   bbox?: string,
   datetime?: string,
-  limit: number = 100
+  limit: number = 10
 ) => {
   const params: any = { collection, limit };
   if (bbox) params.bbox = bbox;
