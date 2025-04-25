@@ -12,19 +12,23 @@ const Schedule = () => {
 
   const handleRegionChange = async (lat: string, lng: string) => {
     setRegionCoords({ lat, lng });
-
+  
     if (selectedDates[0] && selectedDates[1]) {
       const start = selectedDates[0].toISOString().split('T')[0];
       const end = selectedDates[1].toISOString().split('T')[0];
-
+  
+      const payload = {
+        coordinates: {
+          Latitude: lat,
+          Longitude: lng
+        },
+        datIni: start,
+        datFim: end
+      };
+  
       try {
-        const response = await axios.post('http://localhost:3333/api/apontamento/filtro', {
-          startDate: start,
-          endDate: end,
-          latitude: lat,
-          longitude: lng
-        });
-
+        const response = await axios.post('http://localhost:3010/api/search', payload);
+  
         console.log('Resposta do backend:', response.data);
         alert('Dados enviados com sucesso!');
       } catch (error) {
@@ -34,6 +38,7 @@ const Schedule = () => {
       console.warn('Por favor, selecione as datas antes de buscar.');
     }
   };
+  
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>

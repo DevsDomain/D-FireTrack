@@ -115,6 +115,8 @@ export const downloadImage = async (
 
     const writer = fs.createWriteStream(filePath);
     response.data.pipe(writer);
+    const totalLength = parseInt(response.headers["content-length"], 10);
+
 
     writer.on("error", (err) => {
       console.error("❌ Erro ao salvar a imagem:", err);
@@ -133,6 +135,16 @@ export const downloadImage = async (
         });
       });
     });
+
+    let downloadedBytes = 0;
+
+
+    response.data.on("data", (chunk: Buffer) => {
+      downloadedBytes += chunk.length;
+      const percentage = ((downloadedBytes / totalLength) * 100).toFixed(2);
+      process.stdout.write(`📊 Progresso: ${percentage}%\r`);
+    });
+
   } catch (error) {
     console.error("❌ Erro ao baixar a imagem:", error);
     res.status(500).json({ error: "Erro ao baixar a imagem" });

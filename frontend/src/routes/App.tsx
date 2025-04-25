@@ -8,16 +8,20 @@ import Ocorrencias from "../pages/Ocorrencias";
 import Schedule from "../pages/Schedule";
 import "../styles/global.css";
 import Gallery from "../components/Gallery";
+import axios from "axios";
 
 const App: React.FC = () => {
   const mockParams = {
     collection: "CB4-WFI-L4-SR-1",
-    bbox: "-47.9,-21.3,-47.5,-20.9",
+    bbox: "-60.1,-3.2,-48.4,-1.4",
     datetime: "2024-03-01/2024-12-31",
   };
+  
 
-  const handleSelect = (selectedIds: string[]) => {
+  const handleSelect = async (selectedIds: string[]) => {
     console.log("🖼️ Imagens selecionadas:", selectedIds);
+    const response = await axios.post('http://localhost:3010/api/search', {imagesId:selectedIds});
+    console.log(response);
     // você pode navegar ou armazenar para download depois
   };
 

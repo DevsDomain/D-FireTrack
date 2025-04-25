@@ -38,7 +38,7 @@ const Gallery: React.FC<Props> = ({ collection, bbox, datetime, onSelect }) => {
         setItems(parsed);
         setCurrentPage(1);
       } catch (error) {
-        console.error("Erro ao buscar imagens:", error);
+        console.error("Erro ao buscar imagens :", error);
       } finally {
         setLoading(false);
       }
@@ -78,9 +78,8 @@ const Gallery: React.FC<Props> = ({ collection, bbox, datetime, onSelect }) => {
             {paginatedItems.map((item, index) => (
               <div
                 key={item.id}
-                className={`gallery-card ${
-                  selectedIds.includes(item.id) ? "selected" : ""
-                }`}
+                className={`gallery-card ${selectedIds.includes(item.id) ? "selected" : ""
+                  }`}
                 onClick={() => handleCheckboxChange(item.id)} // ⬅️ clique no card todo
               >
                 <img

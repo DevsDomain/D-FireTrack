@@ -7,6 +7,7 @@ import searchRoutes from "./routes/search";
 import { errorHandler } from "./middleware/errorHandler";
 import fs from "fs";
 import path from "path";
+import progressRoute from "./routes/progress";
 
 const app = express();
 const PORT = process.env.PORT || 3333;
@@ -28,6 +29,8 @@ app.use("/search", searchRoutes);
 
 // Middleware Global de Erros (deve ser o último!)
 app.use(errorHandler);
+app.use("/progress", progressRoute);
+
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
