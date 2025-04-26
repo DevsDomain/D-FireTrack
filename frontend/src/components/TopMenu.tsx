@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, TextField, InputAdornment, Typography } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search'; // Ícone de lupa
-import Fire from '../assets/fire.png'; // Importando a imagem
+import SearchIcon from '@mui/icons-material/Search';
+import Fire from '../assets/fire.png';
 
 const TopMenu = () => {
   return (
@@ -13,70 +13,117 @@ const TopMenu = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 20px',
-        position: 'fixed', // Fixa no topo
+        padding: '0 10px',
+        position: 'fixed',
         top: 0,
         left: 0,
-        width: '100%', // Ocupa toda a largura
-        zIndex: 500, // Garante que fique acima de outros elementos
-        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.671)', // Adiciona sombra
+        width: '100%',
+        zIndex: 500,
+        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.671)',
+        flexWrap: 'nowrap',
+        gap: { xs: '5px', md: '20px' },
       }}
     >
       {/* Logo e título */}
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
         <img
-          src={Fire} // Usando a imagem importada
+          src={Fire}
           alt="Logo"
-          style={{ height: '40px', marginRight: '10px' }}
+          style={{ height: '30px' }} // TIREI marginRight aqui!
         />
-        <h2 style={{ margin: 0 }}>D-Tracker Fire</h2>
+        <Typography 
+          variant="h6" 
+          component="h2" 
+          sx={{ 
+            marginLeft: '5px', // Pequeno espaço para não grudar
+            fontSize: { xs: '12px', md: '20px' }
+          }}
+        >
+          D-Tracker Fire
+        </Typography>
       </Box>
 
-      {/* Texto centralizado com a bolinha azul */}
-      <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Box
-          sx={{
-            width: 10,
-            height: 10,
-            backgroundColor: 'blue',
-            borderRadius: '50%',
-            marginRight: '8px',
+      {/* Texto centralizado */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flex: 1,
+          textAlign: 'center',
+        }}
+      >
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            fontWeight: 'bold', 
+            fontSize: { xs: '10px', md: '20px' },
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '6px',
+            whiteSpace: { xs: 'normal', md: 'nowrap' },
+            lineHeight: 1.2,
           }}
-        />
-        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          Visualizador de Cicatrizes de Queimadas
+        >
+          <Box
+            sx={{
+              width: 8,
+              height: 8,
+              backgroundColor: 'blue',
+              borderRadius: '50%',
+              display: 'inline-block',
+            }}
+          />
+          Visualizador de <br /> Cicatrizes de Queimadas
         </Typography>
       </Box>
 
       {/* Campo de busca */}
-      <TextField
-        variant="outlined"
-        placeholder="Buscar localização..."
+      <Box
         sx={{
-          borderRadius: '10px',
-          width: '200px',
-          backgroundColor: 'black',
-          marginRight: '25px', // Empurra para a esquerda
-          '& .MuiInputBase-input': {
-            color: 'white',
-          },
-          '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-              borderColor: 'transparent',
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+        }}
+      >
+        <TextField
+          variant="outlined"
+          placeholder="Buscar..."
+          sx={{
+            borderRadius: '10px',
+            width: { xs: '120px', sm: '180px', md: '250px' },
+            backgroundColor: 'black',
+            ml: { xs: 1, md: 2 }, // marginLeft no campo de busca
+            '& .MuiInputBase-input': {
+              color: 'white',
+              fontSize: { xs: '10px', md: '16px' },
+              padding: '8px',
+              marginRight: '5px'
             },
-          },
-          '& .MuiInputBase-input::placeholder': {
-            color: '#ced2da',
-          },
-        }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <SearchIcon sx={{ color: '#ced2da' }} />
-            </InputAdornment>
-          ),
-        }}
-      />
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: 'transparent',
+              },
+            },
+            '& .MuiInputBase-input::placeholder': {
+              color: '#ced2da',
+              fontSize: { xs: '10px', md: '16px' },
+            },
+          }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <SearchIcon sx={{ color: '#ced2da', fontSize: { xs: '18px', md: '24px' } }} />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
     </Box>
   );
 };

@@ -45,9 +45,9 @@ body {
 /* Ajusta o conteúdo principal para ocupar o espaço ao lado do Sidebar */
 .main-content {
   flex: 1;
-  padding: 20px;
+  padding: 0px;
   overflow-y: auto;
-  margin-left: 250px; /* Deixa espaço para o Sidebar */
+  margin-left: 0px; /* Deixa espaço para o Sidebar */
 }
 
 /* O sidebar ocupa apenas a altura restante */

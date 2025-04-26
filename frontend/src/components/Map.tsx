@@ -8,8 +8,9 @@ import {
   useMapEvents,
   useMap,
   ImageOverlay,
+  Rectangle
 } from "react-leaflet";
-import L from "leaflet";
+import L, { LatLngBounds } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { WMSTileLayer } from "react-leaflet";
 
@@ -44,6 +45,9 @@ const Map: React.FC<MapProps> = ({
     iconAnchor: [16, 32],
     popupAnchor: [0, -32],
   });
+
+
+
 
   const MouseTracker = () => {
     const map = useMap();
@@ -105,7 +109,7 @@ const Map: React.FC<MapProps> = ({
       center={[-23.1896, -45.8841]}
       zoom={10}
       style={{ width: "100vw", height: "100vh" }}
-    >
+    >   
       <MouseTracker />
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
