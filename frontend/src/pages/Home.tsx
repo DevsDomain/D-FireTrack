@@ -33,7 +33,7 @@ const Home = () => {
           </div>
         </div>
       )}
-
+      
       <Map
         selectedDates={selectedDates}
         onMouseMove={setMousePosition}
