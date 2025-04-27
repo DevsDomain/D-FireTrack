@@ -67,8 +67,7 @@ const Sidebar: React.FC = () => {
                 <li>
                   <div className={styles.sectionContent}>
                     <DatePicker />
-                    <br />
-                    <AddLocationAltIcon fontSize="small" /> Selecionar Área
+                    <AddLocationAltIcon fontSize="small"/> Selecionar Área
                     <CoordinateInput />
                   </div>
                 </li>
