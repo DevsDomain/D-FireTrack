@@ -7,67 +7,45 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { BorderColor } from '@mui/icons-material';
 
-// Estilizando o container principal
+// Estilizando o container para evitar barra de rolagem
 const StyledContainer = styled(Box)(({ theme }) => ({
   overflow: 'hidden',
   padding: theme.spacing(2),
-  backgroundColor: '#1f1f2f',
+  backgroundColor: '#f5f5f5',
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(2),
   borderRadius: '12px',
-  width: '100%',
+  width: '90%',
   boxSizing: 'border-box',
+  
 }));
 
 // Estilizando o DatePicker
 const CustomDatePicker = styled(DatePicker)(({ theme }) => ({
-  width: '100%',
+  width: '90%',
   '& .MuiInputBase-root': {
-    backgroundColor: '#1f1f2f',
-    color: '#ffffff',
+    backgroundColor: '#ffffff',
     borderRadius: '8px',
-    border: '1px solid #ffffff',
+    width: '100%',
+    
+    
   },
   '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: '#ffffff',
+    borderColor: '#1976d2',
   },
   '&:hover .MuiOutlinedInput-notchedOutline': {
-    borderColor: '#cccccc',
+    borderColor: '#115293',
   },
   '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-    borderColor: '#ffffff',
+    borderColor: '#0d47a1',
   },
   '& .MuiInputLabel-root': {
-    color: '#ffffff',
+    color: '#1976d2',
   },
   '& .MuiInputLabel-root.Mui-focused': {
-    color: '#ffffff',
-  },
-  '& .MuiSvgIcon-root': {
-    color: '#ffffff',
-  },
-  // Estilizando o Popper (o calendário)
-  '& .MuiPaper-root': {
-    backgroundColor: '#1f1f2f', // Fundo do calendário
-    color: '#ffffff', // Texto branco
-    border: '1px solid #ffffff',
-  },
-  '& .MuiPickersDay-root': {
-    color: '#ffffff', // Números dos dias brancos
-    borderColor: '#ffffff',
-  },
-  '& .MuiPickersDay-root.Mui-selected': {
-    backgroundColor: '#1976d2', // Azul padrão para dia selecionado
-    color: '#ffffff', // Texto do dia selecionado
-  },
-  '& .MuiPickersDay-root:hover': {
-    backgroundColor: '#333', // Hover dos dias
-  },
-  '& .MuiDayCalendar-weekDayLabel': {
-    color: '#ffffff', // Letras dos dias da semana (S, T, Q, etc.)
+    color: '#0d47a1',
   },
 }));
 
@@ -78,7 +56,7 @@ export default function DatePickerValue() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
       <StyledContainer sx={{
-        padding: isMobile ? 1 : 2,
+        padding: isMobile ? 1 : 2, // Reduz padding no mobile
         gap: isMobile ? 1.5 : 2,
       }}>
         <CustomDatePicker 
@@ -87,8 +65,9 @@ export default function DatePickerValue() {
           format="DD/MM/YYYY"
           slotProps={{
             textField: {
-              fullWidth: true,
-              size: isMobile ? 'small' : 'medium',
+              fullWidth: true, 
+              size: isMobile ? 'small' : 'medium', // Input menor no mobile
+              
             }
           }}
         />
