@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Sidebar.module.css";
 import OccurrenceCard from "./OccurrenceCard";
-import DatePicker from "../DatePicker/DatePicker";
-import CoordinateInput from "./CoordinateInput";
+import DateAndCoordinateFilter from "../DatePicker/DateAndCoordinateFilter"; // 🔥 Corrigido o import
 import HomeIcon from "@mui/icons-material/Home";
 import EventNoteIcon from "@mui/icons-material/EventNote";
-import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 import MenuIcon from "@mui/icons-material/Menu";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -23,6 +21,16 @@ const Sidebar: React.FC = () => {
 
   const handleClose = () => {
     if (isMobile) setOpen(false);
+  };
+
+  const handleDateChange = (dates: [Date | null, Date | null]) => {
+    console.log("Datas selecionadas:", dates);
+    // Aqui você pode integrar o que quiser: filtros, requisições, etc.
+  };
+
+  const handleRegionChange = (latitude: string, longitude: string) => {
+    console.log("Coordenadas selecionadas:", latitude, longitude);
+    // Aqui também pode acionar funções para buscar dados no mapa, etc.
   };
 
   return (
@@ -66,11 +74,10 @@ const Sidebar: React.FC = () => {
               {schedulesOpen && (
                 <li>
                   <div className={styles.sectionContent}>
-                    <DatePicker />
-                    <li onClick={handleClose}>
-                      <AddLocationAltIcon fontSize="small" /> Selecionar Área
-                    </li>
-                    <CoordinateInput />
+                    <DateAndCoordinateFilter
+                      onDateChange={handleDateChange}
+                      onRegionChange={handleRegionChange}
+                    />
                   </div>
                 </li>
               )}

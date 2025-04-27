@@ -1,5 +1,9 @@
 {
   "dependencies": {
-    "axios": "^1.8.4"
+    "axios": "^1.8.4",
+    "leaflet-draw": "^1.0.4"
+  },
+  "devDependencies": {
+    "@types/leaflet-draw": "^1.0.11"
   }
 }
