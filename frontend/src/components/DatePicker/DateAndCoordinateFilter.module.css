@@ -1,0 +1,24 @@
+.coordinateInputs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .inputField {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #1976d2;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #333;
+  }
+  
+  .inputField::placeholder {
+    color: #999;
+  }
+  
+  .submitButton {
+    margin-top: 12px;
+  }
+  

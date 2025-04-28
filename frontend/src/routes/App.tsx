@@ -1,11 +1,9 @@
 // src/App.tsx
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../../src/components/Sidebar/Sidebar";
 import TopMenu from "../components/TopMenu";
 import Home from "../pages/Home";
-import Ocorrencias from "../pages/Ocorrencias";
-import Schedule from "../pages/Schedule";
 import "../styles/global.css";
 import Gallery from "../components/Gallery";
 import axios from "axios";
@@ -35,8 +33,6 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/home" element={<Home />} />
-              <Route path="/ocorrencias" element={<Ocorrencias />} />
-              <Route path="/schedule" element={<Schedule />} />
               <Route
                 path="/gallery"
                 element={<Gallery {...mockParams} onSelect={handleSelect} />}
