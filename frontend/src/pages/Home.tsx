@@ -1,4 +1,3 @@
-// src/pages/Home.tsx
 import React, { useState } from 'react';
 import Map from '../components/Map';
 
