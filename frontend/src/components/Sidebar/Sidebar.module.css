@@ -99,6 +99,18 @@
   gap: 0.5rem;
   cursor: pointer;
 }
+.linkItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: inherit; /* Mantém a mesma cor do texto normal */
+  text-decoration: none; /* Sem sublinhado */
+  font-size: 14px; /* Ajuste se precisar */
+}
+
+.linkItem:hover {
+  color: #8888ff; /* Muda a cor suavemente no hover */
+}
 
 /* ===== Ajustes para MOBILE ===== */
 @media (max-width: 768px) {
@@ -130,4 +142,5 @@
   .occurrencesScrollContainer {
     max-height: 400px;
   }
+
 }

@@ -8,6 +8,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { IconButton, useMediaQuery } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const Sidebar: React.FC = () => {
   const isMobile = useMediaQuery("(max-width:768px)");
@@ -21,6 +22,12 @@ const Sidebar: React.FC = () => {
 
   const handleClose = () => {
     if (isMobile) setOpen(false);
+  };
+
+  const handleHomeClick = () => {
+    if (isMobile) setOpen(false);
+    setSchedulesOpen(false);
+    setOccurrencesOpen(false);
   };
 
   const handleDateChange = (dates: [Date | null, Date | null]) => {
@@ -55,8 +62,10 @@ const Sidebar: React.FC = () => {
         <aside className={styles.sidebar}>
           <nav className={styles.nav}>
             <ul>
-              <li onClick={handleClose}>
-                <HomeIcon fontSize="small" /> HOME
+              <li onClick={handleHomeClick}>
+                <Link to="/home" className={styles.linkItem}>
+                  <HomeIcon fontSize="small" /> HOME
+                </Link>
               </li>
 
               {/* Schedules Section */}
