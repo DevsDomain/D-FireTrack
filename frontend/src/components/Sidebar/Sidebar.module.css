@@ -112,6 +112,21 @@
   color: #8888ff; /* Muda a cor suavemente no hover */
 }
 
+.clickableItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: inherit; /* mesma cor padrão */
+  text-decoration: none; /* nada de sublinhado */
+}
+
+.clickableItem:hover {
+  background-color: rgba(0, 0, 0, 0.05); /* fundo levemente cinza */
+  color: #8888ff; /* ou outra cor no hover */
+}
 /* ===== Ajustes para MOBILE ===== */
 @media (max-width: 768px) {
   .sidebar {

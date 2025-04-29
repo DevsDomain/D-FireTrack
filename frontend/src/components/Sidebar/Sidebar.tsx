@@ -62,11 +62,13 @@ const Sidebar: React.FC = () => {
         <aside className={styles.sidebar}>
           <nav className={styles.nav}>
             <ul>
-              <li onClick={handleHomeClick}>
+              <li onClick={handleHomeClick} className={styles.clickableItem}>
                 <Link to="/home" className={styles.linkItem}>
                   <HomeIcon fontSize="small" /> HOME
                 </Link>
               </li>
+
+       
 
               {/* Schedules Section */}
               <li
