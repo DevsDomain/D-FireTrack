@@ -8,8 +8,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { IconButton, useMediaQuery } from "@mui/material";
+import { Link } from "react-router-dom";
 
-// 👇 Adiciona as props esperadas
 interface SidebarProps {
   onDateChange: (dates: [Date | null, Date | null]) => void;
   onRegionChange: (latitude: string, longitude: string) => void;
@@ -51,8 +51,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onDateChange, onRegionChange }) => {
         <aside className={styles.sidebar}>
           <nav className={styles.nav}>
             <ul>
-              <li onClick={handleClose}>
-                <HomeIcon fontSize="small" /> HOME
+              <li
+                onClick={() => {
+                  handleClose();
+                  setOccurrencesOpen(false); // Recolher Ocorrência
+                  setSchedulesOpen(false);   // Recolher Período
+                }}
+                className={styles.clickableItem}
+              >
+                <Link to="/home" className={styles.linkItem}>
+                  <HomeIcon fontSize="small" /> HOME
+                </Link>
               </li>
 
               {/* Seção Período */}
