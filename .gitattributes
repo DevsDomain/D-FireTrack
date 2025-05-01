@@ -1,0 +1,4 @@
+CBERS_4A_WFI_20240821_210_140_L4_BAND15.tif filter=lfs diff=lfs merge=lfs -text
+CBERS_4A_WFI_20240821_210_140_L4_BAND16.tif filter=lfs diff=lfs merge=lfs -text
+classification.json filter=lfs diff=lfs merge=lfs -text
+ndvi_matrix.json filter=lfs diff=lfs merge=lfs -text
