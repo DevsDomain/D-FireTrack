@@ -6,15 +6,27 @@ import fs from "fs";
 
 const stacService = new StacService();
 
+// Função utilitária para validar query params
+function validateQueryParam<T>(
+  value: any,
+  name: string,
+  type: string,
+  res: Response
+): value is T {
+  if (!value || typeof value !== type) {
+    res.status(400).json({
+      error: `O parâmetro '${name}' é obrigatório e deve ser uma ${type}`,
+    });
+    return false;
+  }
+  return true;
+}
+
 export async function searchItems(req: Request, res: Response): Promise<void> {
   const { collection, bbox, datetime, limit, ...extraParams } = req.query;
 
-  if (!collection || typeof collection !== "string") {
-    res.status(400).json({
-      error: 'O parâmetro "collection" é obrigatório e deve ser uma string',
-    });
+  if (!validateQueryParam<string>(collection, "collection", "string", res))
     return;
-  }
 
   let parsedBbox: number[] | undefined;
   if (bbox) {
@@ -34,7 +46,7 @@ export async function searchItems(req: Request, res: Response): Promise<void> {
   }
 
   const searchParams: SearchParams = {
-    collections: [collection as string],
+    collections: [collection],
     bbox: parsedBbox,
     datetime: datetime as string | undefined,
     limit: limit ? Number(limit) : undefined,
@@ -45,8 +57,20 @@ export async function searchItems(req: Request, res: Response): Promise<void> {
 
   try {
     const items = await stacService.search(searchParams);
+    // Inclui thumbnailUrl diretamente em cada item
+    const parsedItems = items.map((item: any) => ({
+      ...item,
+      thumbnailUrl: item.assets?.thumbnail?.href,
+    }));
+
     console.log("✅ Itens encontrados:", items);
-    res.json({ features: items });
+    console.log(
+      "✅ Thumbnails extraídos:",
+      parsedItems.map((i) => i.thumbnailUrl)
+    );
+
+    // Retorna apenas os itens já processados com thumbnailUrl
+    res.json({ features: parsedItems });
   } catch (error) {
     console.error("❌ Erro ao buscar itens da coleção:", collection, error);
     res.status(500).json({
@@ -55,6 +79,7 @@ export async function searchItems(req: Request, res: Response): Promise<void> {
     });
   }
 }
+
 export const downloadImage = async (
   req: Request,
   res: Response
@@ -62,69 +87,41 @@ export const downloadImage = async (
   try {
     const { collection, itemId, band } = req.query;
 
-    if (!collection || typeof collection !== "string") {
-      res
-        .status(400)
-        .json({
-          error: "O parâmetro 'collection' é obrigatório e deve ser uma string",
-        });
+    if (!validateQueryParam<string>(collection, "collection", "string", res))
       return;
-    }
+    if (!validateQueryParam<string>(itemId, "itemId", "string", res)) return;
+    if (!validateQueryParam<string>(band, "band", "string", res)) return;
 
-    if (!itemId || typeof itemId !== "string") {
-      res
-        .status(400)
-        .json({
-          error: "O parâmetro 'itemId' é obrigatório e deve ser uma string",
-        });
-      return;
-    }
-
-    if (!band || typeof band !== "string") {
-      res
-        .status(400)
-        .json({
-          error:
-            "O parâmetro 'band' é obrigatório e deve ser uma string. Exemplo: B02, B08, thumbnail",
-        });
-      return;
-    }
-
-    // URL base da API STAC do INPE
     const stacUrl = `https://data.inpe.br/bdc/stac/v1/collections/${collection}/items/${itemId}`;
-
-    // Obtém os dados do item para buscar a URL da banda desejada
     const { data } = await axios.get(stacUrl);
 
-    // Verifica se a banda solicitada existe na resposta
     if (!data.assets || !data.assets[band]) {
-      res
-        .status(404)
-        .json({
-          error: `Banda '${band}' não encontrada no item '${itemId}'. Bandas disponíveis: ${Object.keys(
-            data.assets
-          ).join(", ")}`,
-        });
+      res.status(404).json({
+        error: `Banda '${band}' não encontrada no item '${itemId}'. Bandas disponíveis: ${Object.keys(
+          data.assets
+        ).join(", ")}`,
+      });
       return;
     }
 
     const imageUrl = data.assets[band].href;
-
     console.log(`📥 Baixando imagem da URL: ${imageUrl}`);
 
-    // Baixa a imagem da URL fornecida
     const response = await axios.get(imageUrl, { responseType: "stream" });
 
-    // Obtém a extensão do arquivo
-    const ext = path.extname(imageUrl).split("?")[0] || ".tif";
-
-    // Define um nome de arquivo temporário
-    const fileName = `downloaded_image_${band}${ext}`;
+    const ext = path.extname(new URL(imageUrl).pathname) || ".tif";
+    const fileName = `${itemId}_${band}${ext}`;
     const filePath = path.join(__dirname, "../../temp", fileName);
 
-    // Salva a imagem temporariamente
     const writer = fs.createWriteStream(filePath);
     response.data.pipe(writer);
+    const totalLength = parseInt(response.headers["content-length"], 10);
+
+
+    writer.on("error", (err) => {
+      console.error("❌ Erro ao salvar a imagem:", err);
+      res.status(500).json({ error: "Erro ao salvar a imagem" });
+    });
 
     writer.on("finish", () => {
       res.download(filePath, fileName, (err) => {
@@ -133,12 +130,21 @@ export const downloadImage = async (
           res.status(500).json({ error: "Erro ao baixar a imagem" });
         }
 
-        // Remove o arquivo temporário após o download
         fs.unlink(filePath, (err) => {
           if (err) console.error("⚠️ Erro ao remover arquivo temporário:", err);
         });
       });
     });
+
+    let downloadedBytes = 0;
+
+
+    response.data.on("data", (chunk: Buffer) => {
+      downloadedBytes += chunk.length;
+      const percentage = ((downloadedBytes / totalLength) * 100).toFixed(2);
+      process.stdout.write(`📊 Progresso: ${percentage}%\r`);
+    });
+
   } catch (error) {
     console.error("❌ Erro ao baixar a imagem:", error);
     res.status(500).json({ error: "Erro ao baixar a imagem" });
