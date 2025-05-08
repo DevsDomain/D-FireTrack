@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { DownloadImageUseCase } from '@/use-case/DownloadImageUseCase';
 import { DownloadImageRepository } from '@/repository/DownloadImage';
+import { ImageClassifierRepository } from '@/repository/ClassificarImage';
+import { ClassificarImageUseCase } from '@/use-case/ClassificarImageUseCase';
 
 class DownloadImageController {
     public async searchImages(req: Request, res: Response): Promise<Response> {
@@ -13,14 +15,23 @@ class DownloadImageController {
 
             console.log("IDs recebidos para download:", imagesId);
 
-            const repository = new DownloadImageRepository();
-            const useCase = new DownloadImageUseCase(repository);
+            const downloadImageRepository = new DownloadImageRepository();
+            const classificarImageRepository = new ImageClassifierRepository();
 
-            const result = await useCase.execute(imagesId); // result: { imagesUrl: string[] }
+            const downloadImageuseCase = new DownloadImageUseCase(downloadImageRepository);
+            const classificarImageUseCase = new ClassificarImageUseCase(classificarImageRepository);
 
-            console.log("Imagens baixadas com sucesso:", result.imagesUrl);
 
-            return res.status(200).json(result);
+            const imagesDownloadPath = await downloadImageuseCase.execute(imagesId); // result: { imagesUrl: string[] }
+            console.log("Imagens baixadas com sucesso:", imagesDownloadPath);
+
+            console.log("Imagem enviada para classificação, Aguarde...")
+            const imagesClassificadasPath = await classificarImageUseCase.execute(imagesDownloadPath);
+            // PASSAR URL DAS IMAGENS PARA ROTA DE CLASSIFICAÇÃO DENTRO DA STAC API:
+
+
+
+            return res.status(200).json(imagesClassificadasPath.imageUrl);
         } catch (error: any) {
             console.error(" Erro ao baixar imagens:", error.message);
             return res.status(500).json({ error: "Erro interno ao processar o download das imagens." });

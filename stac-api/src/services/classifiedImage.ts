@@ -5,7 +5,7 @@ import sharp from 'sharp';
  * @param classificationMatrix Matriz de classificação (mesmo tamanho da matriz NDVI).
  * @param outputPath Caminho para salvar a imagem gerada.
  */
-export async function generateClassifiedImage(classificationMatrix: string[][], outputPath: string): Promise<void> {
+export async function generateClassifiedImage(classificationMatrix: string[][], outputPath: string): Promise<string> {
   const height = classificationMatrix.length;
   const width = classificationMatrix[0].length;
 
@@ -36,4 +36,5 @@ export async function generateClassifiedImage(classificationMatrix: string[][], 
 
   console.log('Classes encontradas:', [...new Set(classificationMatrix.flat())]);
   console.log(`Imagem classificada gerada com sucesso: ${outputPath}`);
+  return outputPath
 }

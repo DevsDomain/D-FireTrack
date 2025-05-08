@@ -8,6 +8,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import fs from "fs";
 import path from "path";
 import progressRoute from "./routes/progress";
+import classificacaoRoute from "./routes/classifier";
 
 const app = express();
 const PORT = process.env.PORT || 3333;
@@ -26,10 +27,11 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Rotas
 app.use("/collections", collectionsRoutes);
 app.use("/search", searchRoutes);
+app.use("/",classificacaoRoute);
 
 // Middleware Global de Erros (deve ser o último!)
-app.use(errorHandler);
 app.use("/progress", progressRoute);
+app.use(errorHandler);
 
 
 app.listen(PORT, () => {

@@ -5,10 +5,8 @@ export class DownloadImageUseCase {
 
     async execute(imagesId: string[]): Promise<DownloadImageResponse> {
 
-        // 1. Usa id e bbox retornados para fazer o download da imagem
-        const downloadResult: DownloadImageResponse = await this.downloadImageRepository.downloadImage(
-            imagesId
-        );
+        // 1. Usa id retornados para fazer o download da imagem
+        const downloadResult: DownloadImageResponse = await this.downloadImageRepository.downloadImage(imagesId);
 
         return downloadResult;
     }
