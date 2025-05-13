@@ -130,9 +130,9 @@ export const downloadImage = async (
           res.status(500).json({ error: "Erro ao baixar a imagem" });
         }
 
-        fs.unlink(filePath, (err) => {
-          if (err) console.error("⚠️ Erro ao remover arquivo temporário:", err);
-        });
+        // fs.unlink(filePath, (err) => {
+        //   if (err) console.error("⚠️ Erro ao remover arquivo temporário:", err);
+        // });
       });
     });
 

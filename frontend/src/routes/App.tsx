@@ -13,7 +13,7 @@ const App: React.FC = () => {
 
   const handleSelect = async (selectedIds: string[]) => {
     console.log("🖼️ Imagens selecionadas:", selectedIds);
-    const response = await axios.post("http://localhost:3010/api/search", {
+    const response = await axios.post("http://localhost:3003/api/search", {
       imagesId: selectedIds,
     });
     console.log(response);
