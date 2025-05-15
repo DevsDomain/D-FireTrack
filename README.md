@@ -19,8 +19,8 @@ Cada entrega foi realizada a partir da criação de uma **tag** Observe a relaç
 | Sprint | Previsão de entrega | Status | Release | Kanban | BurnDown |
 |:--:|:----------:|:-------------------|:-------------------:|:-------------------:|:-------------------:|
 | 01 | 15/04/2025 | ✅ Concluída | [Ver release 1](https://github.com/DevsDomain/D-FireTrack/releases/tag/Sprint1) | [Ver Sprint 1](https://github.com/orgs/DevsDomain/projects/39/views/5) | [Ver BurnDown 1](https://github.com/user-attachments/assets/f5967e2a-51cb-4fc0-908e-d826fcd12bdd) |
-| 02 | 13/05/2025 | 🚧 Em andamento | [Ver release 2]() | [Ver Sprint 2]() | [Ver BurnDown 2]() |
-| 03 | 10/06/2025 | 🕓 Não Iniciada | [Ver release 3]() | [Ver Sprint 3]() | [Ver BurnDown 3]() |
+| 02 | 13/05/2025 | ✅ Concluída | [Ver release 2]() | [Ver Sprint 2](https://github.com/orgs/DevsDomain/projects/39/views/6) | [Ver BurnDown 2]() |
+| 03 | 10/06/2025 | 🚧 Em andamento | [Ver release 3]() | [Ver Sprint 3]() | [Ver BurnDown 3]() |
 
 ## 📋 Product Backlog - Mapeamento de Cicatrizes de Queimadas
 O Product Backlog segue o padrão de priorização:
