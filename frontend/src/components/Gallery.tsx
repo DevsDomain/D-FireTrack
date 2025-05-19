@@ -22,7 +22,8 @@ const Gallery: React.FC<Props> = ({ collection, bbox, datetime, onSelect }) => {
   const [items, setItems] = useState<ImageItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [processing, setProcessing] = useState(false);
+  const [processing, setProcessing] = useState(false); //fd
+  const [percentage, setPercentage] = useState<number>(0); //fd
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   useEffect(() => {

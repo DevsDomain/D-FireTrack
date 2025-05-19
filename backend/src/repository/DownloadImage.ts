@@ -28,8 +28,8 @@ export class DownloadImageRepository implements IDownloadImage {
 
     let downloadedPaths: DownloadImageResponse = {
       redPath: "",
-      nirPath: ""
-    }
+      nirPath: "",
+    };
 
     for (const id of imagesId) {
       try {
@@ -43,44 +43,50 @@ export class DownloadImageRepository implements IDownloadImage {
 
         const bandsUrls = {
           red: data.assets[band[0]].href,
-          nir: data.assets[band[1]].href
-
-        }
+          nir: data.assets[band[1]].href,
+        };
 
         const fileNames = {
           red: `${id}_${band[0]}.tif`,
-          nir: `${id}_${band[1]}.tif`
-        }
+          nir: `${id}_${band[1]}.tif`,
+        };
 
         const filePaths = {
           red: path.join(tempDir, fileNames.red),
-          nir: path.join(tempDir, fileNames.nir)
+          nir: path.join(tempDir, fileNames.nir),
         };
 
-        console.log(`Iniciando download de ${fileNames.red} e ${fileNames.nir}...`);
+        console.log(
+          `Iniciando download de ${fileNames.red} e ${fileNames.nir}...`
+        );
 
         await Promise.all([
           this.downloadFile(bandsUrls.red, filePaths.red, fileNames.red),
-          this.downloadFile(bandsUrls.nir, filePaths.nir, fileNames.nir)
+          this.downloadFile(bandsUrls.nir, filePaths.nir, fileNames.nir),
         ]);
 
         console.log(`✅ Download completo: ${fileNames.red}, ${fileNames.nir}`);
 
         downloadedPaths = {
           redPath: filePaths.red,
-          nirPath: filePaths.nir
+          nirPath: filePaths.nir,
         };
-
-
       } catch (error: any) {
-        console.error(`❌ Erro ao baixar o item '${id}':`, error.message || error);
+        console.error(
+          `❌ Erro ao baixar o item '${id}':`,
+          error.message || error
+        );
       }
     }
 
     return downloadedPaths;
   }
 
-  private async downloadFile(url: string, filePath: string, fileName: string): Promise<void> {
+  private async downloadFile(
+    url: string,
+    filePath: string,
+    fileName: string
+  ): Promise<void> {
     try {
       const response = await axios.get(url, { responseType: "stream" });
 
@@ -100,10 +106,33 @@ export class DownloadImageRepository implements IDownloadImage {
         writer.on("finish", resolve);
         writer.on("error", reject);
       });
-
     } catch (error: any) {
-      console.error(`❌ Erro ao baixar o arquivo '${fileName}':`, error.message || error);
+      console.error(
+        `❌ Erro ao baixar o arquivo '${fileName}':`,
+        error.message || error
+      );
       throw error;
+    }
+  }
+}
+
+export async function baixarImagensSelecionadas(
+  imageIds: string[],
+  onProgressUpdate?: (percent: number) => void
+) {
+  const total = imageIds.length;
+  const repo = new DownloadImageRepository();
+
+  for (let i = 0; i < total; i++) {
+    const id = imageIds[i];
+
+    // Faz o download real da imagem usando o repositório
+    await repo.downloadImage([id]);
+
+    // Atualiza o progresso se a função foi fornecida
+    if (onProgressUpdate) {
+      const percent = Math.round(((i + 1) / total) * 100);
+      onProgressUpdate(percent);
     }
   }
 }
