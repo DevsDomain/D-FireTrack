@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { buscarImagens } from "../services";
+import ProcessingOverlay from "./Processing/ProcessingOverlay";
 import "../styles/Gallery.css";
 
 interface Props {
@@ -21,6 +22,7 @@ const Gallery: React.FC<Props> = ({ collection, bbox, datetime, onSelect }) => {
   const [items, setItems] = useState<ImageItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   useEffect(() => {
@@ -55,8 +57,16 @@ const Gallery: React.FC<Props> = ({ collection, bbox, datetime, onSelect }) => {
     );
   };
 
-  const handleEnviar = () => {
-    onSelect(selectedIds);
+  const handleEnviar = async () => {
+    setProcessing(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // simulação
+      onSelect(selectedIds);
+    } catch (error) {
+      console.error("Erro ao enviar imagens:", error);
+    } finally {
+      setProcessing(false);
+    }
   };
 
   const paginatedItems = items.slice(
@@ -78,9 +88,8 @@ const Gallery: React.FC<Props> = ({ collection, bbox, datetime, onSelect }) => {
             {paginatedItems.map((item, index) => (
               <div
                 key={item.id}
-                className={`gallery-card ${selectedIds.includes(item.id) ? "selected" : ""
-                  }`}
-                onClick={() => handleCheckboxChange(item.id)} // ⬅️ clique no card todo
+                className={`gallery-card ${selectedIds.includes(item.id) ? "selected" : ""}`}
+                onClick={() => handleCheckboxChange(item.id)}
               >
                 <img
                   src={item.thumbnailUrl || "/placeholder.png"}
@@ -93,7 +102,7 @@ const Gallery: React.FC<Props> = ({ collection, bbox, datetime, onSelect }) => {
                 <input
                   type="checkbox"
                   checked={selectedIds.includes(item.id)}
-                  readOnly // ⬅️ impedimos conflito com clique duplo
+                  readOnly
                   className="gallery-checkbox"
                   title="Selecionar imagem"
                 />
@@ -122,8 +131,11 @@ const Gallery: React.FC<Props> = ({ collection, bbox, datetime, onSelect }) => {
           </div>
         </>
       )}
+
+      {processing && <ProcessingOverlay message="Processando imagens selecionadas..." />}
     </div>
   );
+
 };
 
 export default Gallery;
