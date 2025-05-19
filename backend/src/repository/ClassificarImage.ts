@@ -22,11 +22,9 @@ export class ImageClassifierRepository implements IImageClassifier {
     const baseURL = "http://localhost:3333"
 
     const response = await axios.post(`${baseURL}/classificacao`, imagesUrl);
-    console.log("RESPONSE DA CLASSIFICAÇÃO",response.data);
     return response.data
 
   }
-
 
 
 }
