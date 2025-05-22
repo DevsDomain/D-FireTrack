@@ -4,8 +4,7 @@
 Este projeto tem como objetivo o desenvolvimento de uma solução completa (API, aplicação web) para o mapeamento automático de cicatrizes de queimadas utilizando imagens do sensor WFI a bordo dos satélites CBERS4, CBERS4A e Amazônia 1. O projeto será desenvolvido com base em técnicas de Deep Learning e processamento em nuvem.
  
 ## 🖥️ Frontend
-![Frontend](https://github.com/user-attachments/assets/7b21ca3f-355f-4d49-bb1e-ed3ebb6f5df1)
-
+![Frontend](https://github.com/user-attachments/assets/75fad590-a959-428f-aa53-0fe68d9d1112)
 
 
 ### 🏁 Entregas de Sprints
