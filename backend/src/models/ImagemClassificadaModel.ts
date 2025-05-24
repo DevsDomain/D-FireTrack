@@ -1,4 +1,4 @@
-import mongoose, { Model, Mongoose, Schema } from "mongoose";
+import mongoose, { Model, Schema } from "mongoose";
 
 export interface ImagemClassificada {
   id: mongoose.Types.ObjectId;
