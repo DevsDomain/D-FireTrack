@@ -1,24 +1,23 @@
 .coordinateInputs {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .inputField {
-    width: 100%;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #1976d2;
-    border-radius: 6px;
-    background-color: #fff;
-    color: #333;
-  }
-  
-  .inputField::placeholder {
-    color: #999;
-  }
-  
-  .submitButton {
-    margin-top: 12px;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  gap: 0.6vh; /* 8px ≈ 0.6% da altura da viewport */
+}
+
+.inputField {
+  width: 100%;
+  padding: 0.9vh 1vw; /* 8px ≈ 0.6vh vertical | horizontal: ajustado com vw para telas largas */
+  font-size: 1vw; /* 14px ≈ 1vw */
+  border: 0.1vw solid #1976d2;
+  border-radius: 0.4vw;
+  background-color: #fff;
+  color: #333;
+}
+
+.inputField::placeholder {
+  color: #999;
+}
+
+.submitButton {
+  margin-top: 0.9vh; /* 12px ≈ 0.9% da altura da tela */
+}

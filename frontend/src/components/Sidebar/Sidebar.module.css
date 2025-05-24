@@ -1,7 +1,7 @@
 /* === SIDEBAR === */
 .sidebar {
   width: 100%;
-  max-width: 250px;
+  max-width: 16vw; /* ~250px em 1440px */
   background-color: #f9f9f9;
   color: #333;
   height: 100vh;
@@ -18,8 +18,8 @@
 }
 
 .logo {
-  width: 24px;
-  height: 24px;
+  width: 1.7vw;  /* ~24px */
+  height: 1.7vw;
 }
 
 /* === NAVEGAÇÃO === */
@@ -65,23 +65,23 @@
   font-size: 1rem;
   padding: 0.5rem;
   box-sizing: border-box;
-  border: 1px solid #ccc;
+  border: 0.07vw solid #ccc; /* ~1px */
   background-color: white;
   color: #333;
-  border-radius: 6px;
+  border-radius: 0.4vw; /* ~6px */
 }
 
 /* === SCROLL E CARDS MODERNOS === */
 .occurrencesScrollContainer {
-  max-height: 650px;
+  max-height: 90vh; /* 650px ≈ 90% da viewport vertical */
   overflow-y: auto;
-  padding-right: 10px;
+  padding-right: 0.7vw;
   scrollbar-width: thin;
   scrollbar-color: #ccc transparent;
 }
 
 .occurrencesScrollContainer::-webkit-scrollbar {
-  width: 8px;
+  width: 0.55vw; /* ~8px */
 }
 
 .occurrencesScrollContainer::-webkit-scrollbar-track {
@@ -90,23 +90,23 @@
 
 .occurrencesScrollContainer::-webkit-scrollbar-thumb {
   background-color: #bbb;
-  border-radius: 8px;
+  border-radius: 0.6vw;
 }
 
 /* === CARD MODERNO === */
 .card {
   background-color: #ffffff;
   padding: 1.25rem;
-  border-radius: 12px;
+  border-radius: 0.8vw;
   margin-top: 1.2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 0.13rem 0.55rem rgba(0, 0, 0, 0.06);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border: none;
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-0.14rem);
+  box-shadow: 0 0.28rem 1.1rem rgba(0, 0, 0, 0.08);
 }
 
 .cardHeader {
@@ -117,7 +117,7 @@
 }
 
 .icon {
-  font-size: 24px;
+  font-size: 1.7vw;
   color: #5555dd;
 }
 
@@ -138,7 +138,7 @@
   border: none;
   color: white;
   padding: 0.6rem 1.2rem;
-  border-radius: 6px;
+  border-radius: 0.4vw;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -155,10 +155,10 @@
 .linkItem {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.6vw;
   color: inherit;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 0.97rem;
 }
 
 .linkItem:hover {
@@ -169,8 +169,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: 0.6vw;
+  padding: 0.6vw 1vw;
   cursor: pointer;
   color: inherit;
   text-decoration: none;
@@ -184,7 +184,7 @@
 /* === MOBILE === */
 @media (max-width: 768px) {
   .sidebar {
-    max-width: 40%;
+    max-width: 40vw;
     height: 100vh;
   }
 
@@ -209,6 +209,6 @@
   }
 
   .occurrencesScrollContainer {
-    max-height: 400px;
+    max-height: 55vh; /* 400px aprox. */
   }
 }

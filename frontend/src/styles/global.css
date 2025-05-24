@@ -46,8 +46,8 @@ body {
 .content {
   display: flex;
   flex-direction: row;
-  margin-top: 60px; /* Garante que o conteúdo abaixo comece depois do TopMenu */
-  height: calc(100vh - 60px);
+  margin-top: 7vh; /* Substitui 60px */
+  height: calc(100vh - 7vh); /* Ajuste proporcional */
 }
 
 /* Ajusta o conteúdo principal para ocupar o espaço ao lado do Sidebar */
@@ -60,10 +60,10 @@ body {
 
 /* O sidebar ocupa apenas a altura restante */
 .sidebar {
-  width: 250px;
+  width: 17vw; /* Substitui 250px */
   background-color: #2D2F39;
   color: white;
-  padding-top: 10px;
+  padding-top: 1.25vh; /* Substitui 10px */
   height: 100%;
 }
 

@@ -20,19 +20,19 @@ interface DateAndCoordinateFilterProps {
 // Estilizando o container principal
 const StyledContainer = styled(Box)(({ theme }) => ({
   overflow: "hidden",
-  padding: theme.spacing(2),
+  padding: "2vh 2vw", // substitui theme.spacing(2)
   backgroundColor: "#f5f5f5",
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing(2),
-  borderRadius: "12px",
+  gap: "2vh", // substitui theme.spacing(2)
+  borderRadius: "1.2vw", // proporcional a 12px
   width: "90%",
   boxSizing: "border-box",
 
   [theme.breakpoints.down("sm")]: {
     width: "60%",
-    padding: theme.spacing(1),
-    gap: theme.spacing(1.5),
+    padding: "1vh 1vw", // substitui theme.spacing(1)
+    gap: "1.5vh",       // substitui theme.spacing(1.5)
   },
 }));
 
@@ -68,17 +68,17 @@ const StyledTextFieldProps = {
 const CoordinateInputs = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: "8px",
+  gap: "1vh", // proporcional a 8px
   alignItems: "center",
 }));
 
 const InputField = styled("input")(({ theme }) => ({
   width: "90%",
-  maxWidth: "200px",
-  padding: "8px",
-  fontSize: "14px",
-  border: "1px solid #5555DD",
-  borderRadius: "6px",
+  maxWidth: "20vw", // proporcional a 200px
+  padding: "1vh 1vw", // proporcional a 8px
+  fontSize: "1vw", // proporcional a 14px
+  border: "0.1vw solid #5555DD", // proporcional a 1px
+  borderRadius: "0.6vw", // proporcional a 6px
   backgroundColor: "#ffffff",
   color: "#5555DD",
   "&::placeholder": {
@@ -86,13 +86,13 @@ const InputField = styled("input")(({ theme }) => ({
   },
 
   [theme.breakpoints.down("sm")]: {
-    width: "125px",
-    fontSize: "12px",
+    width: "30vw",     // proporcional a 125px
+    fontSize: "2.5vw", // proporcional a 12px
   },
 }));
 
 const SubmitButton = styled(Button)(({ theme }) => ({
-  marginTop: "12px",
+  marginTop: "1.2vh", // proporcional a 12px
 }));
 
 export default function DateAndCoordinateFilter({

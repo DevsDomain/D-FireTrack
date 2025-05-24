@@ -36,11 +36,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onDateChange, onRegionChange }) => {
           onClick={() => setOpen(true)}
           sx={{
             position: "fixed",
-            top: 10,
-            left: 10,
+            top: "1vh",         // ~10px
+            left: "1vw",        // ~10px
             zIndex: 2000,
             backgroundColor: "#2c2c3f",
             color: "white",
+            padding: "0.6rem",  // melhora toque em telas pequenas
           }}
         >
           <MenuIcon />

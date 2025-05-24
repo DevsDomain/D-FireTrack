@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import Sidebar from "./../src/components/Sidebar/Sidebar";
 import TopMenu from "./components/TopMenu";
 import Home from "./pages/Home";
