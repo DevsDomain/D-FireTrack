@@ -14,8 +14,8 @@ const Home = () => {
         <div
         style={{
           position: 'absolute',
-          top: '1vh',                  // 12px ≈ 1vh
-          right: '1vw',                // 12px ≈ 1vw
+          top: '2vh',                  // 12px ≈ 1vh
+          right: '5vw',                // 12px ≈ 1vw
           backgroundColor: 'rgba(255, 255, 255, 0.9)',
           padding: '0.5rem 0.75rem',   // 8px 12px ≈ 0.5rem 0.75rem
           borderRadius: '0.5rem',      // 8px ≈ 0.5rem
