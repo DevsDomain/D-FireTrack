@@ -1,4 +1,5 @@
 import axios from "axios";
+import { env } from "@/env";
 
 
 export interface ImageClassifierResponse {
@@ -19,14 +20,12 @@ export interface IImageClassifier {
 export class ImageClassifierRepository implements IImageClassifier {
   async classificadorImages(imagesUrl: ImageClassifierRequest): Promise<ImageClassifierResponse> {
 
-    const baseURL = "http://localhost:3333"
+    const baseURL = env.STAC_API_BASE_URL;
 
     const response = await axios.post(`${baseURL}/classificacao`, imagesUrl);
-    console.log("RESPONSE DA CLASSIFICAÇÃO",response.data);
     return response.data
 
   }
-
 
 
 }
