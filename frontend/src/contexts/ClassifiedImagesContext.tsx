@@ -1,4 +1,5 @@
-import React, { createContext, useState, useContext } from "react";
+// frontend/src/contexts/ClassifiedImagesContext.tsx
+import React, { createContext, useState, useContext, ReactNode } from "react";
 
 export interface ClassifiedImage {
   uri: string;
@@ -8,25 +9,40 @@ export interface ClassifiedImage {
 
 interface ClassifiedImagesContextData {
   images: ClassifiedImage[];
+  setImages: (images: ClassifiedImage[]) => void;
   addImage: (image: ClassifiedImage) => void;
 }
 
 const ClassifiedImagesContext = createContext<ClassifiedImagesContextData>({
   images: [],
+  setImages: () => {},
   addImage: () => {},
 });
 
-export const ClassifiedImagesProvider: React.FC<{
-  children: React.ReactNode;
-}> = ({ children }) => {
-  const [images, setImages] = useState<ClassifiedImage[]>([]);
+export const ClassifiedImagesProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [images, setImagesState] = useState<ClassifiedImage[]>([]);
 
-  const addImage = (image: ClassifiedImage) => {
-    setImages((prev) => [...prev, image]);
+  const setImagesContext = (newImages: ClassifiedImage[]) => {
+    setImagesState(newImages);
+  };
+
+  const addImageContext = (image: ClassifiedImage) => {
+    // Evita adicionar imagens duplicadas pela URI, se necessário
+    // if (images.find(img => img.uri === image.uri)) {
+    //   console.log("Imagem já existe:", image.uri);
+    //   return;
+    // }
+    setImagesState((prev) => [...prev, image]);
+    console.log("Imagem adicionada ao contexto:", image);
+    console.log("Estado atual das imagens no contexto:", [...images, image]);
   };
 
   return (
-    <ClassifiedImagesContext.Provider value={{ images, addImage }}>
+    <ClassifiedImagesContext.Provider
+      value={{ images, setImages: setImagesContext, addImage: addImageContext }}
+    >
       {children}
     </ClassifiedImagesContext.Provider>
   );
