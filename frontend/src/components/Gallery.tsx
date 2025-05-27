@@ -6,13 +6,17 @@ interface Props {
   collection: string;
   bbox?: string;
   datetime?: string;
-  onSelect: (selectedIds: string[]) => void;
+  onSelect: (selectedImages: ImageItem[]) => void;
 }
 
-interface ImageItem {
+export interface ImageItem {
   id: string;
   thumbnailUrl?: string;
   datetime: string;
+  geometry: {
+    type: string;
+    coordinates: number[][][];
+  };
 }
 
 const ITEMS_PER_PAGE = 20;
@@ -33,6 +37,7 @@ const Gallery: React.FC<Props> = ({ collection, bbox, datetime, onSelect }) => {
           id: item.id,
           datetime: item.datetime,
           thumbnailUrl: item.thumbnailUrl,
+          geometry: item.geometry,
         }));
 
         setItems(parsed);
@@ -56,7 +61,8 @@ const Gallery: React.FC<Props> = ({ collection, bbox, datetime, onSelect }) => {
   };
 
   const handleEnviar = () => {
-    onSelect(selectedIds);
+    const selectedImages = items.filter((img) => selectedIds.includes(img.id));
+    onSelect(selectedImages);
   };
 
   const paginatedItems = items.slice(
@@ -78,8 +84,9 @@ const Gallery: React.FC<Props> = ({ collection, bbox, datetime, onSelect }) => {
             {paginatedItems.map((item, index) => (
               <div
                 key={item.id}
-                className={`gallery-card ${selectedIds.includes(item.id) ? "selected" : ""
-                  }`}
+                className={`gallery-card ${
+                  selectedIds.includes(item.id) ? "selected" : ""
+                }`}
                 onClick={() => handleCheckboxChange(item.id)} // ⬅️ clique no card todo
               >
                 <img
