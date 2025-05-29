@@ -1,18 +1,13 @@
-import React, { useEffect, useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
+import React, { useState } from "react";
+import MapView, {
   Marker,
-  Popup,
-  LayersControl,
-  useMapEvents,
-  useMap,
-  ImageOverlay,
-  Rectangle
-} from "react-leaflet";
-import L, { LatLngBounds } from "leaflet";
-import "leaflet/dist/leaflet.css";
-import { WMSTileLayer } from "react-leaflet";
+  UrlTile,
+  Overlay,
+  MapPressEvent,
+  LatLng,
+  PROVIDER_GOOGLE,
+} from "react-native-maps";
+import { View, StyleSheet, Platform } from "react-native";
 
 interface MapProps {
   selectedDates: [Date | null, Date | null];
@@ -25,121 +20,81 @@ interface MapProps {
   }) => void;
 }
 
-interface SatelliteImage {
-  url: string;
-  bounds: [[number, number], [number, number]];
-}
-
-const Map: React.FC<MapProps> = ({
-  selectedDates,
-  onMouseMove,
-  onBoundsChange,
-}) => {
-  const [satelliteImage, setSatelliteImage] = useState<SatelliteImage | null>(
-    null
-  );
-
-  const markerIcon = new L.Icon({
-    iconUrl: require("../assets/images.png"),
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
+const Map: React.FC<MapProps> = ({ selectedDates, onMouseMove, onBoundsChange }) => {
+  const [region, setRegion] = useState({
+    latitude: -23.1896,
+    longitude: -45.8841,
+    latitudeDelta: 0.2,
+    longitudeDelta: 0.2,
   });
 
+  const [markerPosition, setMarkerPosition] = useState<LatLng>({
+    latitude: -23.1896,
+    longitude: -45.8841,
+  });
 
-
-
-  const MouseTracker = () => {
-    const map = useMap();
-
-    useMapEvents({
-      mousemove(e) {
-        onMouseMove?.({ lat: e.latlng.lat, lng: e.latlng.lng });
-
-        const bounds = map.getBounds();
-        onBoundsChange?.({
-          north: bounds.getNorth(),
-          south: bounds.getSouth(),
-          east: bounds.getEast(),
-          west: bounds.getWest(),
-        });
-      },
-    });
-
-    return null;
+  const handleRegionChangeComplete = (reg: typeof region) => {
+    const bounds = {
+      north: reg.latitude + reg.latitudeDelta / 2,
+      south: reg.latitude - reg.latitudeDelta / 2,
+      east: reg.longitude + reg.longitudeDelta / 2,
+      west: reg.longitude - reg.longitudeDelta / 2,
+    };
+    onBoundsChange?.(bounds);
   };
 
-  useEffect(() => {
-    const fetchSatelliteImage = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:3000/search?collection=S2-16D-2&bbox=-46.0,-23.5,-45.5,-22.8&datetime=2023-01-01/2023-12-31&limit=10`
-        );
-        const data = await response.json();
+  const handlePress = (e: MapPressEvent) => {
+    const coords = e.nativeEvent.coordinate;
+    setMarkerPosition(coords);
+    onMouseMove?.({ lat: coords.latitude, lng: coords.longitude });
+  };
 
-        if (data.features && data.features.length > 0) {
-          const firstFeature = data.features[0];
-          const thumbnail = firstFeature.assets?.thumbnail?.href;
-          const bbox = firstFeature.bbox;
+  // Exemplo fixo do bounds da imagem satélite (igual bbox do seu exemplo leaflet)
+  // bbox: [-46.0, -23.5, -45.5, -22.8]
+  // que equivale a [SW_lat, SW_lng], [NE_lat, NE_lng]
+  const satelliteBounds: [[number, number], [number, number]] = [
+    [-23.5, -46.0], // SW lat,lng
+    [-22.8, -45.5], // NE lat,lng
+  ];
 
-          if (thumbnail && bbox) {
-            setSatelliteImage({
-              url: thumbnail,
-              bounds: [
-                [bbox[1], bbox[0]],
-                [bbox[3], bbox[2]],
-              ],
-            });
-          } else {
-            console.warn("Dados incompletos na resposta da API:", firstFeature);
-          }
-        } else {
-          console.warn("Nenhuma feature encontrada na resposta da API.");
-        }
-      } catch (error) {
-        console.error("Erro ao buscar imagem de satélite:", error);
-      }
-    };
-
-    fetchSatelliteImage();
-  }, [selectedDates]);
+  // URL da imagem de satélite - troque pela sua real
+  const satelliteImageUrl = "https://your-server.com/path-to-satellite-image.png";
 
   return (
-    <MapContainer
-  center={[-23.1896, -45.8841]}
-  zoom={10}
-  style={{ width: "100%", height: "100%", position: "absolute", top: 0, left: 0 }}
->
-
-      
-      <MouseTracker />
-      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-      <LayersControl position="topright">
-        <LayersControl.Overlay checked name="Cbers 4">
-          <WMSTileLayer
-            url="https://data.inpe.br/bdc/geoserver/mosaics/ows?"
-            layers="mosaic-cbers4-brazil-3m"
-            format="image/png"
-            transparent
-            opacity={0.6}
-          />
-        </LayersControl.Overlay>
-      </LayersControl>
-
-      {satelliteImage && (
-        <ImageOverlay
-          url={satelliteImage.url}
-          bounds={satelliteImage.bounds}
-          opacity={0.85}
+    <View style={styles.container}>
+      <MapView
+        provider={PROVIDER_GOOGLE}
+        style={StyleSheet.absoluteFillObject}
+        initialRegion={region}
+        onRegionChangeComplete={handleRegionChangeComplete}
+        onPress={handlePress}
+      >
+        {/* Camada de tiles OpenStreetMap */}
+        <UrlTile
+          urlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          maximumZ={19}
         />
-      )}
 
-      <Marker position={[-23.1896, -45.8841]} icon={markerIcon}>
-        <Popup>São José dos Campos</Popup>
-      </Marker>
-    </MapContainer>
+        {/* Marker móvel */}
+        <Marker coordinate={markerPosition} title="Localização" />
+
+        {/* Overlay da imagem satélite - só funciona no iOS */}
+        {Platform.OS === "ios" && (
+          <Overlay
+            image={{ uri: satelliteImageUrl }}
+            bounds={satelliteBounds}
+            opacity={0.7}
+          />
+        )}
+      </MapView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
 export default Map;

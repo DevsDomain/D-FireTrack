@@ -1,128 +1,166 @@
-import React, { useState, useEffect } from "react";
-import styles from "./Sidebar.module.css";
-import OccurrenceCard from "./OccurrenceCard";
-import DateAndCoordinateFilter from "../DatePicker/DateAndCoordinateFilter";
-import HomeIcon from "@mui/icons-material/Home";
-import EventNoteIcon from "@mui/icons-material/EventNote";
-import MenuIcon from "@mui/icons-material/Menu";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import { IconButton, useMediaQuery } from "@mui/material";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    ScrollView,
+    StyleSheet,
+    Dimensions,
+    Platform,
+} from 'react-native';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import DateAndCoordinateFilter from '../DatePicker/DateAndCoordinateFilter';
+import OccurrenceCard from '../OcurrenceCard'; // <- Corrigido nome do arquivo
 
-interface SidebarProps {
-  onDateChange: (dates: [Date | null, Date | null]) => void;
-  onRegionChange: (latitude: string, longitude: string) => void;
+interface Props {
+    onDateChange: (dates: [Date | null, Date | null]) => void;
+    onRegionChange: (lat: string, lng: string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onDateChange, onRegionChange }) => {
-  const isMobile = useMediaQuery("(max-width:768px)");
-  const [open, setOpen] = useState(true);
-  const [schedulesOpen, setSchedulesOpen] = useState(false);
-  const [occurrencesOpen, setOccurrencesOpen] = useState(false);
+const Sidebar: React.FC<Props> = ({ onDateChange, onRegionChange }) => {
+    const [open, setOpen] = useState(false);
+    const [showPeriod, setShowPeriod] = useState(false);
+    const [showOccurrences, setShowOccurrences] = useState(false);
 
-  useEffect(() => {
-    setOpen(!isMobile);
-  }, [isMobile]);
+    return (
+        <>
+            {/* Botão flutuante sempre visível */}
+            <TouchableOpacity
+                style={[
+                    styles.menuButton,
+                    open ? styles.menuButtonOpen : styles.menuButtonClosed,
+                    { position: 'absolute', top: 1, left: 1 },
+                ]}
+                onPress={() => setOpen(!open)}
+                activeOpacity={0.8}
+            >
+                <Ionicons name="menu" size={24} color="white" />
+            </TouchableOpacity>
 
-  const handleClose = () => {
-    if (isMobile) setOpen(false);
-  };
+            {/* Sidebar */}
+            {open && (
+                <View style={styles.sidebarContainer}>
+                    <ScrollView contentContainerStyle={styles.menuContent}>
+                        {/* HOME */}
+                        <TouchableOpacity style={styles.item} onPress={() => setOpen(false)}>
+                            <Ionicons name="home" size={18} color="#ffffff" />
+                            <Text style={styles.itemText}>Home</Text>
+                        </TouchableOpacity>
 
-  return (
-    <>
-      {isMobile && !open && (
-        <IconButton
-          onClick={() => setOpen(true)}
-          sx={{
-            position: "fixed",
-            top: "1vh",         // ~10px
-            left: "1vw",        // ~10px
-            zIndex: 2000,
-            backgroundColor: "#2c2c3f",
-            color: "white",
-            padding: "0.6rem",  // melhora toque em telas pequenas
-          }}
-        >
-          <MenuIcon />
-        </IconButton>
-      )}
+                        {/* PERÍODO */}
+                        <TouchableOpacity
+                            style={styles.item}
+                            onPress={() => setShowPeriod(!showPeriod)}
+                        >
+                            <MaterialIcons name="date-range" size={18} color="#ffffff" />
+                            <Text style={styles.itemText}>Período</Text>
+                        </TouchableOpacity>
 
-      {open && (
-        <aside className={styles.sidebar}>
-          <nav className={styles.nav}>
-            <ul>
-              <li
-                onClick={() => {
-                  handleClose();
-                  setOccurrencesOpen(false); // Recolher Ocorrência
-                  setSchedulesOpen(false);   // Recolher Período
-                }}
-                className={styles.clickableItem}
-              >
-                <Link to="/home" className={styles.linkItem}>
-                  <HomeIcon fontSize="small" /> HOME
-                </Link>
-              </li>
+                        {showPeriod && (
+                            <View style={{ marginLeft: -10, marginBottom: 20 }}>
+                                <DateAndCoordinateFilter
+                                    onDateChange={onDateChange}
+                                    onRegionChange={onRegionChange}
+                                />
+                            </View>
+                        )}
 
-              {/* Seção Período */}
-              <li
-                onClick={() => setSchedulesOpen(!schedulesOpen)}
-                className={styles.clickableItem}
-              >
-                <EventNoteIcon fontSize="small" />
-                Período
-                <div className={styles.sectionHeader}>
-                  {schedulesOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                </div>
-              </li>
+                        {/* OCORRÊNCIAS */}
+                        <TouchableOpacity
+                            style={styles.item}
+                            onPress={() => setShowOccurrences(!showOccurrences)}
+                        >
+                            <Ionicons name="alert-circle-outline" size={18} color="#ffffff" />
+                            <Text style={styles.itemText}>Ocorrências</Text>
+                        </TouchableOpacity>
 
-              {schedulesOpen && (
-                <li>
-                  <div className={styles.sectionContent}>
-                    <DateAndCoordinateFilter
-                      onDateChange={onDateChange}
-                      onRegionChange={onRegionChange}
-                    />
-                  </div>
-                </li>
-              )}
-
-              {/* Seção Ocorrência */}
-              <li
-                onClick={() => setOccurrencesOpen(!occurrencesOpen)}
-                className={styles.clickableItem}
-              >
-                <EventNoteIcon fontSize="small" />
-                Ocorrência
-                <div className={styles.sectionHeader}>
-                  {occurrencesOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                </div>
-              </li>
-
-              {occurrencesOpen && (
-                <li>
-                  <div className={styles.sectionContent}>
-                    <div className={styles.occurrencesScrollContainer}>
-                      {Array.from({ length: 10 }).map((_, idx) => (
-                        <OccurrenceCard
-                          key={idx}
-                          region="São Paulo - SP"
-                          date="15/08/2023"
-                          hectares="1250"
-                          description="Área de floresta afetada com queimadas externas afetando"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </li>
-              )}
-            </ul>
-          </nav>
-        </aside>
-      )}
-    </>
-  );
+                        {showOccurrences && (
+                            <View style={{ marginBottom: 20 }}>
+                                {Array.from({ length: 10 }).map((_, idx) => (
+                                    <OccurrenceCard
+                                        key={idx}
+                                        region="São Paulo - SP"
+                                        date="15/08/2023"
+                                        hectares="1250"
+                                        description="Área de floresta afetada com queimadas externas afetando vegetação nativa."
+                                    />
+                                ))}
+                            </View>
+                        )}
+                    </ScrollView>
+                </View>
+            )}
+        </>
+    );
 };
+
+const sidebarWidthOpen = 220;
+const topMenuHeight = 70;
+const windowHeight = Dimensions.get('window').height;
+
+const styles = StyleSheet.create({
+    sidebarContainer: {
+        position: 'absolute',
+        top: topMenuHeight,
+        left: 0,
+        width: sidebarWidthOpen,
+        height: windowHeight - topMenuHeight,
+        backgroundColor: '#2a0236',
+        paddingTop: 1,
+        zIndex: 1000,
+        shadowColor: '#000',
+        shadowOffset: { width: 2, height: 0 },
+        shadowRadius: 4,
+        elevation: 10,
+    },
+    menuButton: {
+        position: 'absolute',
+        top: Platform.OS === 'ios' ? topMenuHeight + 10 : topMenuHeight + 5,
+        left: 10,
+        borderRadius: 8,
+        zIndex: 1100,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    menuButtonClosed: {
+        width: 40,
+        height: 40,
+        backgroundColor: 'rgba(0,0,0,0.3)',
+    },
+    menuButtonOpen: {
+        width: sidebarWidthOpen,
+        height: 50,
+        backgroundColor: '#2a0236',
+        paddingLeft: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    menuContent: {
+        paddingLeft: 10,
+    },
+    item: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        paddingVertical: 10,
+    },
+    itemText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    card: {
+        backgroundColor: '#fff',
+        marginTop: 10,
+        marginRight: 10,
+        marginBottom: 20,
+        padding: 10,
+        borderRadius: 10,
+    },
+    cardText: {
+        color: '#333',
+        fontWeight: 'bold',
+    },
+});
 
 export default Sidebar;

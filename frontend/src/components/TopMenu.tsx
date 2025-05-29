@@ -1,119 +1,86 @@
 import React from 'react';
-import { Box, TextField, InputAdornment, Typography } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import { View, Text, TextInput, StyleSheet, Platform, Dimensions } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const TopMenu = () => {
   return (
-    <Box
-      sx={{
-        height: '8vh', // proporcional à altura da tela
-        backgroundColor: '#5555DD',
-        color: '#FFF',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 2vw', // padding responsivo
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        zIndex: 500,
-        boxShadow: '0 0.3vh 1vh rgba(0, 0, 0, 0.815)',
-        flexWrap: 'nowrap',
-        gap: { xs: '1vw', md: '2vw' },
-      }}
-    >
-      {/* Logo e título */}
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Typography
-          variant="h6"
-          component="h2"
-          sx={{
-            marginLeft: '1vw',
-            fontSize: { xs: '2.5vw', md: '1.3vw' }, // responsivo
-          }}
-        >
-          🛰️ Mobile Scars
-        </Typography>
-      </Box>
+    <View style={styles.container}>
+      <Text style={styles.logo}>🛰️ Mobile Scars</Text>
 
-      {/* Texto centralizado */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flex: 1,
-          textAlign: 'center',
-        }}
-      >
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: 'bold',
-            fontSize: { xs: '2.5vw', md: '1.3vw' },
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1vw',
-            whiteSpace: { xs: 'normal', md: 'nowrap' },
-            lineHeight: 1.2,
-          }}
-        >
-          <Box
-            sx={{
-              width: '0.6vw',
-              height: '0.6vw',
-              backgroundColor: '#a855f7',
-              borderRadius: '50%',
-              display: 'inline-block',
-              minWidth: '6px', // para não sumir em telas muito pequenas
-              minHeight: '6px',
-            }}
-          />
-          Visualizador de <br /> Cicatrizes de Queimadas
-        </Typography>
-      </Box>
+      <View style={styles.titleBox}>
+        <View style={styles.dot} />
+        <Text style={styles.title}>Visualizador de{'\n'}Cicatrizes de Queimadas</Text>
+      </View>
 
-      {/* Campo de busca */}
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-        <TextField
-          variant="outlined"
+      <View style={styles.searchBox}>
+        <TextInput
           placeholder="Buscar..."
-          sx={{
-            borderRadius: '0.8vw',
-            width: { xs: '25vw', sm: '30vw', md: '20vw' }, // responsivo
-            backgroundColor: '#ffffff',
-            ml: { xs: '1vw', md: '2vw' },
-            '& .MuiInputBase-input': {
-              color: '#333',
-              fontSize: { xs: '2.5vw', md: '1vw' },
-              padding: '1vh',
-              marginRight: '1vw',
-            },
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: '#e0d4f7',
-              },
-              '&:hover fieldset': {
-                borderColor: '#c084fc',
-              },
-            },
-            '& .MuiInputBase-input::placeholder': {
-              color: '#a78bfa',
-              fontSize: { xs: '2.5vw', md: '1vw' },
-            },
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <SearchIcon sx={{ color: '#a78bfa', fontSize: { xs: '4vw', md: '1.5vw' } }} />
-              </InputAdornment>
-            ),
-          }}
+          placeholderTextColor="#a78bfa"
+          style={styles.input}
         />
-      </Box>
-    </Box>
+        <Ionicons name="search" size={screenWidth * 0.045} color="#a78bfa" style={styles.icon} />
+      </View>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+    container: {
+      height: 120, // aumente para a altura desejada
+      backgroundColor: '#5555DD',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 12,
+      paddingTop: Platform.OS === 'ios' ? 40 : 20,
+    },
+  logo: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: screenWidth * 0.04,
+  },
+  titleBox: {
+    flex: 1,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 4,
+    marginHorizontal: screenWidth * 0.02,
+  },
+  dot: {
+    width: screenWidth * 0.015,
+    height: screenWidth * 0.015,
+    backgroundColor: '#091794',
+    borderRadius: screenWidth * 0.015,
+    marginRight: 1,
+  },
+  title: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: screenWidth * 0.035,
+    textAlign: 'left',
+    lineHeight: screenWidth * 0.045,
+  },
+  searchBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: screenWidth * 0.02,
+    paddingHorizontal: screenWidth * 0.02,
+    height: screenHeight * 0.045,
+  },
+  input: {
+    fontSize: screenWidth * 0.035,
+    color: '#333',
+    width: screenWidth * 0.25,
+    padding: 0,
+    marginRight: screenWidth * 0.01,
+  },
+  icon: {
+    marginLeft: screenWidth * 0.01,
+  },
+});
 
 export default TopMenu;

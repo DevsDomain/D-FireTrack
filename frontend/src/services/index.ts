@@ -2,10 +2,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3333", // ajuste se a API rodar em outra porta
+  baseURL: "http://192.168.x.x:3333", // IP da sua máquina na rede local
 });
 
-// Busca imagens com base nos parâmetros fornecidos
 export const buscarImagens = async (
   collection: string,
   bbox?: string,

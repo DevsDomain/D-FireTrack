@@ -1,9 +1,14 @@
 // services/fetchSchedule.ts
-import axios from 'axios';
+import axios from "axios";
+
+// Ajuste o baseURL para o IP da sua máquina ou localhost correto
+const api = axios.create({
+  baseURL: "http://192.168.x.x:3333", // exemplo de IP local
+});
 
 export const FetchSchedule = async (id: string) => {
   try {
-    const response = await axios.post('http://localhost:3333/api/apontamento/filtro', {
+    const response = await api.post("/api/apontamento/filtro", {
       latitude: "-22.9068",
       longitude: "-43.1729",
       startDate: "2025-04-22",
