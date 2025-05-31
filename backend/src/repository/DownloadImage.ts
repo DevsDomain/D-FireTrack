@@ -8,7 +8,8 @@ export interface SearchImageResponse {
 }
 
 export interface DownloadImageResponse {
-  imagesUrl: string[];
+  redPath: string;
+  nirPath: string;
 }
 
 export interface IDownloadImage {
@@ -18,58 +19,91 @@ export interface IDownloadImage {
 export class DownloadImageRepository implements IDownloadImage {
   async downloadImage(imagesId: string[]): Promise<DownloadImageResponse> {
     const collection = "CB4-WFI-L4-SR-1";
-    const band = "BAND15";
+    const band = ["BAND15", "BAND16"];
     const tempDir = path.join(os.tmpdir(), "inpe-downloads");
 
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir, { recursive: true });
     }
 
-    const downloadedPaths: string[] = [];
+    let downloadedPaths: DownloadImageResponse = {
+      redPath: "",
+      nirPath: ""
+    }
 
     for (const id of imagesId) {
       try {
         const stacUrl = `https://data.inpe.br/bdc/stac/v1/collections/${collection}/items/${id}`;
         const { data } = await axios.get(stacUrl);
 
-        if (!data.assets || !data.assets[band]) {
+        if (!data.assets || !data.assets[band[0]] || !data.assets[band[1]]) {
           console.warn(`⚠️ Banda '${band}' não encontrada no item '${id}'`);
           continue;
         }
 
-        const imageUrl = data.assets[band].href;
-        const ext = path.extname(new URL(imageUrl).pathname) || ".tif";
-        const fileName = `${id}_${band}${ext}`;
-        const filePath = path.join(tempDir, fileName);
+        const bandsUrls = {
+          red: data.assets[band[0]].href,
+          nir: data.assets[band[1]].href
 
-        const response = await axios.get(imageUrl, { responseType: "stream" });
-        const totalLength = parseInt(response.headers["content-length"], 10);
-        const writer = fs.createWriteStream(filePath);
+        }
 
-        let downloadedBytes = 0;
+        const fileNames = {
+          red: `${id}_${band[0]}.tif`,
+          nir: `${id}_${band[1]}.tif`
+        }
 
-        response.data.on("data", (chunk: Buffer) => {
-          downloadedBytes += chunk.length;
-          const percentage = ((downloadedBytes / totalLength) * 100).toFixed(2);
-          process.stdout.write(`📊 [${id}] Progresso: ${percentage}%\r`);
-        });
+        const filePaths = {
+          red: path.join(tempDir, fileNames.red),
+          nir: path.join(tempDir, fileNames.nir)
+        };
 
-        await new Promise<void>((resolve, reject) => {
-          response.data.pipe(writer);
-          writer.on("finish", resolve);
-          writer.on("error", reject);
-        });
+        console.log(`Iniciando download de ${fileNames.red} e ${fileNames.nir}...`);
 
-        console.log(`\n✅ Download completo: ${fileName}`);
-        downloadedPaths.push(filePath);
+        await Promise.all([
+          this.downloadFile(bandsUrls.red, filePaths.red, fileNames.red),
+          this.downloadFile(bandsUrls.nir, filePaths.nir, fileNames.nir)
+        ]);
+
+        console.log(`✅ Download completo: ${fileNames.red}, ${fileNames.nir}`);
+
+        downloadedPaths = {
+          redPath: filePaths.red,
+          nirPath: filePaths.nir
+        };
+
 
       } catch (error: any) {
         console.error(`❌ Erro ao baixar o item '${id}':`, error.message || error);
       }
     }
 
-    return {
-      imagesUrl: downloadedPaths,
-    };
+    return downloadedPaths;
+  }
+
+  private async downloadFile(url: string, filePath: string, fileName: string): Promise<void> {
+    try {
+      const response = await axios.get(url, { responseType: "stream" });
+
+      const totalLength = parseInt(response.headers["content-length"], 10);
+      let downloadedBytes = 0;
+
+      const writer = fs.createWriteStream(filePath);
+
+      response.data.on("data", (chunk: Buffer) => {
+        downloadedBytes += chunk.length;
+        const percentage = ((downloadedBytes / totalLength) * 100).toFixed(2);
+        process.stdout.write(`📊 [${fileName}] Progresso: ${percentage}%\r`);
+      });
+
+      await new Promise<void>((resolve, reject) => {
+        response.data.pipe(writer);
+        writer.on("finish", resolve);
+        writer.on("error", reject);
+      });
+
+    } catch (error: any) {
+      console.error(`❌ Erro ao baixar o arquivo '${fileName}':`, error.message || error);
+      throw error;
+    }
   }
 }

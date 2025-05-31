@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { DownloadImageUseCase } from '@/use-case/DownloadImageUseCase';
 import { DownloadImageRepository } from '@/repository/DownloadImage';
+import { ImageClassifierRepository } from '@/repository/ClassificarImage';
+import { ClassificarImageUseCase } from '@/use-case/ClassificarImageUseCase';
 
 class DownloadImageController {
     public async searchImages(req: Request, res: Response): Promise<Response> {
@@ -11,16 +13,22 @@ class DownloadImageController {
                 return res.status(400).json({ error: "O campo 'imagesId' é obrigatório e deve ser um array com pelo menos um ID." });
             }
 
-            console.log("IDs recebidos para download:", imagesId);
+            const downloadImageRepository = new DownloadImageRepository();
+            const classificarImageRepository = new ImageClassifierRepository();
 
-            const repository = new DownloadImageRepository();
-            const useCase = new DownloadImageUseCase(repository);
+            const downloadImageuseCase = new DownloadImageUseCase(downloadImageRepository);
+            const classificarImageUseCase = new ClassificarImageUseCase(classificarImageRepository);
 
-            const result = await useCase.execute(imagesId); // result: { imagesUrl: string[] }
 
-            console.log("Imagens baixadas com sucesso:", result.imagesUrl);
+            const imagesDownloadPath = await downloadImageuseCase.execute(imagesId); // result: { imagesUrl: string[] }
 
-            return res.status(200).json(result);
+            console.log("Imagem enviada para classificação, Aguarde...");
+
+            // Envia .tiff para a classificação
+            const imagesClassificadasPath = await classificarImageUseCase.execute(imagesDownloadPath);
+
+
+            return res.status(200).json(imagesClassificadasPath);
         } catch (error: any) {
             console.error(" Erro ao baixar imagens:", error.message);
             return res.status(500).json({ error: "Erro interno ao processar o download das imagens." });

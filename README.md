@@ -3,9 +3,8 @@
 ## :memo: Desafio
 Este projeto tem como objetivo o desenvolvimento de uma solução completa (API, aplicação web) para o mapeamento automático de cicatrizes de queimadas utilizando imagens do sensor WFI a bordo dos satélites CBERS4, CBERS4A e Amazônia 1. O projeto será desenvolvido com base em técnicas de Deep Learning e processamento em nuvem.
  
-## 🖥️ Protótipo Navegavel Figma
-![Prototipo_Figma](https://github.com/user-attachments/assets/a31bfa27-72ec-432b-a0a2-b32b16ee8c0b)
-
+## 🖥️ Frontend
+![Frontend](https://github.com/user-attachments/assets/75fad590-a959-428f-aa53-0fe68d9d1112)
 
 
 ### 🏁 Entregas de Sprints
@@ -19,8 +18,9 @@ Cada entrega foi realizada a partir da criação de uma **tag** Observe a relaç
 | Sprint | Previsão de entrega | Status | Release | Kanban | BurnDown |
 |:--:|:----------:|:-------------------|:-------------------:|:-------------------:|:-------------------:|
 | 01 | 15/04/2025 | ✅ Concluída | [Ver release 1](https://github.com/DevsDomain/D-FireTrack/releases/tag/Sprint1) | [Ver Sprint 1](https://github.com/orgs/DevsDomain/projects/39/views/5) | [Ver BurnDown 1](https://github.com/user-attachments/assets/f5967e2a-51cb-4fc0-908e-d826fcd12bdd) |
-| 02 | 13/05/2025 | 🚧 Em andamento | [Ver release 2]() | [Ver Sprint 2]() | [Ver BurnDown 2]() |
-| 03 | 10/06/2025 | 🕓 Não Iniciada | [Ver release 3]() | [Ver Sprint 3]() | [Ver BurnDown 3]() |
+| 02 | 13/05/2025 | ✅ Concluída | [Ver release 2](https://github.com/DevsDomain/D-FireTrack/releases/tag/Sprint2) | [Ver Sprint 2](https://github.com/orgs/DevsDomain/projects/39/views/6) | [Ver BurnDown 2](https://github.com/user-attachments/assets/08b48e4e-1f98-4cd7-b7ba-3046f86b1136) |
+| 03 | 10/06/2025 | 🚧 Em andamento | [Ver release 3]() | [Ver Sprint 3]() | [Ver BurnDown 3]() |
+
 
 ## 📋 Product Backlog - Mapeamento de Cicatrizes de Queimadas
 O Product Backlog segue o padrão de priorização:

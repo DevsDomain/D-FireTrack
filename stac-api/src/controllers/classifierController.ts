@@ -3,37 +3,58 @@ import { generateNDVIImage } from '../services/ndviImageService';
 import { classifyNDVIWithKNN } from '../services/knnService';
 import { generateClassifiedImage } from '../services/classifiedImage';
 import fs from 'fs';
+import { Request, Response } from 'express';
+import path from 'path';
 
-(async () => {
-  const redPath = '../data/CBERS_4A_WFI_20240821_210_140_L4_BAND15.tif';
-  const nirPath = '../data/CBERS_4A_WFI_20240821_210_140_L4_BAND16.tif';
-  const patternsPath = '../data/patterns.json';
-  const ndviMatrixPath = '../dataOutput/ndvi_matrix.json';
-  const ndviImagePath = '../dataOutput/ndvi_image.png';
-  const classificationOutputPath = '../dataOutput/classification.json';
-  const classifiedImagePath = '../dataOutput/classified_image.png';
+class ClassifierController {
+  async classifyImage(req: Request, res: Response) {
 
-  try {
-    console.log('Calculando NDVI...');
-    const { ndvi } = await processNDVIFromLocalFiles(redPath, nirPath);
+    console.log("BATEU")
 
-    console.log('Salvando matriz NDVI...');
-    fs.writeFileSync(ndviMatrixPath, JSON.stringify(ndvi, null, 2));
+    const projectRoot = path.resolve(__dirname, '..', '..');
+    const basePath = path.join(projectRoot, 'src', 'dataOutput');
+    const patternsPath = path.join(projectRoot, 'src', 'data', 'patterns.json');
 
-    console.log('Gerando imagem NDVI...');
-    await generateNDVIImage(ndvi, ndviImagePath);
+    const ndviMatrixPath = path.join(basePath, 'ndvi_matrix.json');
+    const ndviImagePath = path.join(basePath, 'ndvi_image.png');
+    const classificationOutputPath = path.join(basePath, 'classification.json');
+    const classifiedImagePath = path.join(basePath, 'classified_image.png');
 
-    console.log('Classificando NDVI com KNN...');
-    const classification = await classifyNDVIWithKNN(ndvi, patternsPath);
 
-    console.log('Salvando classificação...');
-    fs.writeFileSync(classificationOutputPath, JSON.stringify(classification, null, 2));
+    try {
+      const { redPath, nirPath } = req.body;
 
-    console.log('Gerando imagem classificada...');
-    await generateClassifiedImage(classification, classifiedImagePath);
 
-    console.log('Processo concluído. Matriz NDVI, imagem NDVI, classificação e imagem classificada salvas.');
-  } catch (error) {
-    console.error('Erro:', error);
+      console.log("REDPATH recebido", redPath);
+      console.log("nirPath recebido", nirPath);
+
+      if (!fs.existsSync(basePath)) {
+        fs.mkdirSync(basePath, { recursive: true });
+      }
+
+      console.log('Calculando NDVI...');
+      const { ndvi } = await processNDVIFromLocalFiles(redPath, nirPath);
+
+
+      fs.writeFileSync(ndviMatrixPath, JSON.stringify(ndvi, null, 2));
+
+      await generateNDVIImage(ndvi, ndviImagePath);
+
+      const classification = await classifyNDVIWithKNN(ndvi, patternsPath);
+
+      console.log('Salvando classificação...');
+      fs.writeFileSync(classificationOutputPath, JSON.stringify(classification, null, 2));
+
+      console.log('Gerando imagem classificada...');
+      const caminhoDaImagemClassificada = await generateClassifiedImage(classification, classifiedImagePath);
+
+      console.log('Processo concluído. Matriz NDVI, imagem NDVI, classificação e imagem classificada salvas.');
+
+      res.status(200).json({imageUrl:caminhoDaImagemClassificada});
+    } catch (error) {
+      console.error('Erro:', error);
+    }
   }
-})();
+}
+
+export default new ClassifierController();
