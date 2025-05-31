@@ -11,10 +11,16 @@ export interface ImageClassifierRequest {
   nirPath: string;
 }
 
+export interface ImageGeometry {
+    type: "Polygon";
+    coordinates: [number, number][][];
+  };
+
+
 
 
 export interface IImageClassifier {
-  classificadorImages(imagesUrl: ImageClassifierRequest): Promise<ImageClassifierResponse>;
+  classificadorImages(imagesUrl: ImageClassifierRequest,imageGeom :ImageGeometry): Promise<ImageClassifierResponse>;
 }
 
 export class ImageClassifierRepository implements IImageClassifier {
