@@ -13,8 +13,6 @@ class DownloadImageController {
                 return res.status(400).json({ error: "O campo 'imagesId' é obrigatório e deve ser um array com pelo menos um ID." });
             }
 
-            console.log("IDs recebidos para download:", imagesId);
-
             const downloadImageRepository = new DownloadImageRepository();
             const classificarImageRepository = new ImageClassifierRepository();
 
@@ -23,15 +21,14 @@ class DownloadImageController {
 
 
             const imagesDownloadPath = await downloadImageuseCase.execute(imagesId); // result: { imagesUrl: string[] }
-            console.log("Imagens baixadas com sucesso:", imagesDownloadPath);
 
-            console.log("Imagem enviada para classificação, Aguarde...")
+            console.log("Imagem enviada para classificação, Aguarde...");
+
+            // Envia .tiff para a classificação
             const imagesClassificadasPath = await classificarImageUseCase.execute(imagesDownloadPath);
-            // PASSAR URL DAS IMAGENS PARA ROTA DE CLASSIFICAÇÃO DENTRO DA STAC API:
 
 
-
-            return res.status(200).json(imagesClassificadasPath.imageUrl);
+            return res.status(200).json(imagesClassificadasPath);
         } catch (error: any) {
             console.error(" Erro ao baixar imagens:", error.message);
             return res.status(500).json({ error: "Erro interno ao processar o download das imagens." });
