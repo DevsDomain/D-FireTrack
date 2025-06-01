@@ -7,6 +7,10 @@ export interface ImagemClassificada {
   xcoord: string;
   ycoord: string;
   date: string
+  geometry: {
+    type: 'Polygon';
+    coordinates: number[][][];
+  }
 }
 
 const ImagemClassificada = new Schema<ImagemClassificada>({
@@ -15,8 +19,21 @@ const ImagemClassificada = new Schema<ImagemClassificada>({
   path: { type: String },
   xcoord: { type: String, required: true },
   ycoord: { type: String, required: true },
-  date: { type: String, required: true }
+  date: { type: String, required: true },
+  geometry: {
+    type: {
+      type: String, enum: ['Polygon'], required: true
+    },
+    coordinates: {
+      type: [[[Number]]],
+      required: true
+    }
+  }
+
 });
+
+
+ImagemClassificada.index({ geometry: '2dsphere' });
 
 const ImagemClassificadaModel: Model<ImagemClassificada> =
   mongoose.model<ImagemClassificada>(

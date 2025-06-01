@@ -7,17 +7,25 @@ export interface SearchImageResponse {
   idImage: string;
 }
 
+interface imagens {
+  id: string;
+  geometry: {
+    type: "Polygon";
+    coordinates: [number, number][][];
+  };
+}
+
 export interface DownloadImageResponse {
   redPath: string;
   nirPath: string;
 }
 
 export interface IDownloadImage {
-  downloadImage(imagesId: string[]): Promise<DownloadImageResponse>;
+  downloadImage(imagesId: imagens): Promise<DownloadImageResponse>;
 }
 
 export class DownloadImageRepository implements IDownloadImage {
-  async downloadImage(imagesId: string[]): Promise<DownloadImageResponse> {
+  async downloadImage(imagesId: imagens): Promise<DownloadImageResponse> {
     const collection = "CB4-WFI-L4-SR-1";
     const band = ["BAND15", "BAND16"];
     const tempDir = path.join(os.tmpdir(), "inpe-downloads");
@@ -31,51 +39,51 @@ export class DownloadImageRepository implements IDownloadImage {
       nirPath: ""
     }
 
-    for (const id of imagesId) {
-      try {
-        const stacUrl = `https://data.inpe.br/bdc/stac/v1/collections/${collection}/items/${id}`;
-        const { data } = await axios.get(stacUrl);
+    const id = imagesId.id
 
-        if (!data.assets || !data.assets[band[0]] || !data.assets[band[1]]) {
-          console.warn(`⚠️ Banda '${band}' não encontrada no item '${id}'`);
-          continue;
-        }
+    try {
+      const stacUrl = `https://data.inpe.br/bdc/stac/v1/collections/${collection}/items/${id}`;
+      const { data } = await axios.get(stacUrl);
 
-        const bandsUrls = {
-          red: data.assets[band[0]].href,
-          nir: data.assets[band[1]].href
-
-        }
-
-        const fileNames = {
-          red: `${id}_${band[0]}.tif`,
-          nir: `${id}_${band[1]}.tif`
-        }
-
-        const filePaths = {
-          red: path.join(tempDir, fileNames.red),
-          nir: path.join(tempDir, fileNames.nir)
-        };
-
-        console.log(`Iniciando download de ${fileNames.red} e ${fileNames.nir}...`);
-
-        await Promise.all([
-          this.downloadFile(bandsUrls.red, filePaths.red, fileNames.red),
-          this.downloadFile(bandsUrls.nir, filePaths.nir, fileNames.nir)
-        ]);
-
-        console.log(`✅ Download completo: ${fileNames.red}, ${fileNames.nir}`);
-
-        downloadedPaths = {
-          redPath: filePaths.red,
-          nirPath: filePaths.nir
-        };
-
-
-      } catch (error: any) {
-        console.error(`❌ Erro ao baixar o item '${id}':`, error.message || error);
+      if (!data.assets || !data.assets[band[0]] || !data.assets[band[1]]) {
+        console.warn(`⚠️ Banda '${band}' não encontrada no item '${id}'`);
       }
+
+      const bandsUrls = {
+        red: data.assets[band[0]].href,
+        nir: data.assets[band[1]].href
+
+      }
+
+      const fileNames = {
+        red: `${id}_${band[0]}.tif`,
+        nir: `${id}_${band[1]}.tif`
+      }
+
+      const filePaths = {
+        red: path.join(tempDir, fileNames.red),
+        nir: path.join(tempDir, fileNames.nir)
+      };
+
+      console.log(`Iniciando download de ${fileNames.red} e ${fileNames.nir}...`);
+
+      await Promise.all([
+        this.downloadFile(bandsUrls.red, filePaths.red, fileNames.red),
+        this.downloadFile(bandsUrls.nir, filePaths.nir, fileNames.nir)
+      ]);
+
+      console.log(`✅ Download completo: ${fileNames.red}, ${fileNames.nir}`);
+
+      downloadedPaths = {
+        redPath: filePaths.red,
+        nirPath: filePaths.nir
+      };
+
+
+    } catch (error: any) {
+      console.error(`❌ Erro ao baixar o item '${id}':`, error.message || error);
     }
+
 
     return downloadedPaths;
   }

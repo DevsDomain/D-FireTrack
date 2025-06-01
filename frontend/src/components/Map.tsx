@@ -8,11 +8,12 @@ import {
   useMapEvents,
   useMap,
   ImageOverlay,
-  Rectangle
+  Polygon,
 } from "react-leaflet";
 import L, { LatLngBounds } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { WMSTileLayer } from "react-leaflet";
+import { useClassifiedImages } from "../contexts/ClassifiedImagesContext";
 
 interface MapProps {
   selectedDates: [Date | null, Date | null];
@@ -25,10 +26,42 @@ interface MapProps {
   }) => void;
 }
 
+interface ClassifiedDBImage {
+  _id: string;
+  image: string;
+  xcoord: number;
+  ycoord: number;
+  date: string;
+  geometry: {
+    type: "Polygon";
+    coordinates: number[][][];
+  };
+}
+
 interface SatelliteImage {
   url: string;
   bounds: [[number, number], [number, number]];
 }
+
+const FitBounds: React.FC<{ polygons: ClassifiedDBImage[] }> = ({
+  polygons,
+}) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (polygons.length > 0) {
+      const allCoords = polygons.flatMap((img) =>
+        img.geometry.coordinates[0].map(
+          ([lng, lat]) => [lat, lng] as [number, number]
+        )
+      );
+      const bounds = L.latLngBounds(allCoords);
+      map.fitBounds(bounds);
+    }
+  }, [polygons, map]);
+
+  return null;
+};
 
 const Map: React.FC<MapProps> = ({
   selectedDates,
@@ -38,6 +71,23 @@ const Map: React.FC<MapProps> = ({
   const [satelliteImage, setSatelliteImage] = useState<SatelliteImage | null>(
     null
   );
+  const [classifiedImages, setClassifiedImages] = useState<ClassifiedDBImage[]>(
+    []
+  );
+
+  useEffect(() => {
+    const fetchClassifiedImages = async () => {
+      try {
+        const response = await fetch("http://localhost:3010/api/classified");
+        const data = await response.json();
+        setClassifiedImages(data);
+      } catch (error) {
+        console.error("Erro ao buscar imagens classificadas:", error);
+      }
+    };
+
+    fetchClassifiedImages();
+  }, []);
 
   const markerIcon = new L.Icon({
     iconUrl: require("../assets/images.png"),
@@ -45,9 +95,6 @@ const Map: React.FC<MapProps> = ({
     iconAnchor: [16, 32],
     popupAnchor: [0, -32],
   });
-
-
-
 
   const MouseTracker = () => {
     const map = useMap();
@@ -106,12 +153,16 @@ const Map: React.FC<MapProps> = ({
 
   return (
     <MapContainer
-  center={[-23.1896, -45.8841]}
-  zoom={10}
-  style={{ width: "100%", height: "100%", position: "absolute", top: 0, left: 0 }}
->
-
-      
+      center={[-23.1896, -45.8841]}
+      zoom={10}
+      style={{
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        top: 0,
+        left: 0,
+      }}
+    >
       <MouseTracker />
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
@@ -134,6 +185,30 @@ const Map: React.FC<MapProps> = ({
           opacity={0.85}
         />
       )}
+
+      {classifiedImages.map((img) => {
+        const coords = img.geometry.coordinates[0].map(
+          ([lng, lat]) => [lat, lng] as [number, number]
+        );
+
+        return (
+          <Polygon key={img._id} positions={coords} color="red">
+            <Popup>
+              <div>
+                <strong>Data:</strong> {img.date} <br />
+                <strong>Coords:</strong> ({img.xcoord}, {img.ycoord}) <br />
+                <img
+                  src={`http://localhost:3010/classified-images/${img.image}`}
+                  alt="Classificada"
+                  style={{ width: "100px", height: "auto" }}
+                />
+              </div>
+            </Popup>
+          </Polygon>
+        );
+      })}
+
+      <FitBounds polygons={classifiedImages} />
 
       <Marker position={[-23.1896, -45.8841]} icon={markerIcon}>
         <Popup>São José dos Campos</Popup>
