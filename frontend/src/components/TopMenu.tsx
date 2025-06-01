@@ -7,11 +7,12 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 const TopMenu = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>🛰️ Mobile Scars</Text>
+      <View style={styles.titleBlock}>
+        <Text style={styles.logo}>🛰️ Mobile Scars</Text>
 
-      <View style={styles.titleBox}>
-        <View style={styles.dot} />
-        <Text style={styles.title}>Visualizador de{'\n'}Cicatrizes de Queimadas</Text>
+        <Text style={styles.subTitle}>
+          Visualizador de{'\n'}Cicatrizes de Queimadas
+        </Text>
       </View>
 
       <View style={styles.searchBox}>
@@ -27,41 +28,33 @@ const TopMenu = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-      height: 120, // aumente para a altura desejada
-      backgroundColor: '#5555DD',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: 12,
-      paddingTop: Platform.OS === 'ios' ? 40 : 20,
-    },
+  container: {
+    height: 140,
+    backgroundColor: '#5555DD',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingTop: Platform.OS === 'ios' ? 40 : 20,
+  },
+  titleBlock: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   logo: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: screenWidth * 0.04,
+    fontSize: screenWidth * 0.05,
+    marginBottom: 8,
+    marginLeft: 30,
   },
-  titleBox: {
-    flex: 1,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 4,
-    marginHorizontal: screenWidth * 0.02,
-  },
-  dot: {
-    width: screenWidth * 0.015,
-    height: screenWidth * 0.015,
-    backgroundColor: '#091794',
-    borderRadius: screenWidth * 0.015,
-    marginRight: 1,
-  },
-  title: {
+  subTitle: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: screenWidth * 0.035,
-    textAlign: 'left',
+    textAlign: 'center',
     lineHeight: screenWidth * 0.045,
+    marginLeft: 0
   },
   searchBox: {
     flexDirection: 'row',

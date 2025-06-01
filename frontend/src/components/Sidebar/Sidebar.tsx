@@ -95,7 +95,7 @@ const Sidebar: React.FC<Props> = ({ onDateChange, onRegionChange }) => {
 };
 
 const sidebarWidthOpen = 220;
-const topMenuHeight = 70;
+const topMenuHeight = 53;
 const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({

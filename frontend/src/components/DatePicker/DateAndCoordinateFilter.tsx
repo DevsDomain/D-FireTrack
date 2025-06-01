@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text, Platform } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 interface Props {
   onDateChange: (dates: [Date | null, Date | null]) => void;
@@ -12,8 +12,7 @@ const DateAndCoordinateFilter: React.FC<Props> = ({ onDateChange, onRegionChange
   const [endDate, setEndDate] = useState<Date | null>(new Date());
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
-  const [showStart, setShowStart] = useState(false);
-  const [showEnd, setShowEnd] = useState(false);
+  const [pickerMode, setPickerMode] = useState<'start' | 'end' | null>(null);
 
   const handleSubmit = () => {
     if (startDate && endDate && latitude && longitude) {
@@ -24,37 +23,24 @@ const DateAndCoordinateFilter: React.FC<Props> = ({ onDateChange, onRegionChange
     }
   };
 
+  const handleConfirm = (date: Date) => {
+    if (pickerMode === 'start') {
+      setStartDate(date);
+    } else if (pickerMode === 'end') {
+      setEndDate(date);
+    }
+    setPickerMode(null);
+  };
+
   return (
     <View style={styles.container}>
       {/* Data início */}
       <Text style={styles.label}>Data Início</Text>
-      <Button title={startDate?.toLocaleDateString() || 'Selecionar'} onPress={() => setShowStart(true)} />
-      {showStart && (
-        <DateTimePicker
-          value={startDate || new Date()}
-          mode="date"
-          display={Platform.OS === 'ios' ? 'inline' : 'default'}
-          onChange={(event, date) => {
-            setShowStart(false);
-            if (date) setStartDate(date);
-          }}
-        />
-      )}
+      <Button title={startDate?.toLocaleDateString() || 'Selecionar'} onPress={() => setPickerMode('start')} />
 
       {/* Data fim */}
       <Text style={styles.label}>Data Fim</Text>
-      <Button title={endDate?.toLocaleDateString() || 'Selecionar'} onPress={() => setShowEnd(true)} />
-      {showEnd && (
-        <DateTimePicker
-          value={endDate || new Date()}
-          mode="date"
-          display={Platform.OS === 'ios' ? 'inline' : 'default'}
-          onChange={(event, date) => {
-            setShowEnd(false);
-            if (date) setEndDate(date);
-          }}
-        />
-      )}
+      <Button title={endDate?.toLocaleDateString() || 'Selecionar'} onPress={() => setPickerMode('end')} />
 
       {/* Inputs de coordenadas */}
       <TextInput
@@ -78,6 +64,16 @@ const DateAndCoordinateFilter: React.FC<Props> = ({ onDateChange, onRegionChange
       <View style={styles.buttonContainer}>
         <Button title="Buscar" onPress={handleSubmit} color="#5555DD" />
       </View>
+
+      {/* Modal de seleção de data */}
+      <DateTimePickerModal
+        isVisible={pickerMode !== null}
+        mode="date"
+        date={pickerMode === 'start' ? startDate || new Date() : endDate || new Date()}
+        onConfirm={handleConfirm}
+        onCancel={() => setPickerMode(null)}
+        locale="pt-BR"
+      />
     </View>
   );
 };
