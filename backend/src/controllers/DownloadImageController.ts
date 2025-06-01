@@ -19,7 +19,7 @@ class DownloadImageController {
 
             if (!parsed.success) {
                 return res.status(400).json({ error: parsed.error.flatten() });
-              }
+            }
 
             const imagensRecebidas = parsed.data.images
 
@@ -31,21 +31,26 @@ class DownloadImageController {
             const downloadImageuseCase = new DownloadImageUseCase(downloadImageRepository);
             const classificarImageUseCase = new ClassificarImageUseCase(classificarImageRepository);
 
-          /*   // VERIFICA SE JÁ TEMOS A IMAGEM CLASSIFICADA
-            const buscarImagem =  await buscarImageUseCase.execute(imagensRecebidas[0].id);
+            // VERIFICA SE JÁ TEMOS A IMAGEM CLASSIFICADA
+            let imagemRecebida = imagensRecebidas[0]
+            const buscarImagem = await buscarImageUseCase.execute({
+                imageName: imagemRecebida.id,
+                geometry: imagemRecebida.geometry
+            });
 
-            if(buscarImagem?.imageUrl){
-                return res.status(200).json(buscarImagem.imageUrl);
+            if (buscarImagem) {
+                console.log("Imagem encontrada no mongoDB, retornando objeto classificado")
+                return res.status(200).json(buscarImagem);
             }
 
-            console.log("NÃO ENCONTROU",buscarImagem) */
+            console.log("NÃO ENCONTROU", buscarImagem)
 
             const imagesDownloadPath = await downloadImageuseCase.execute(imagensRecebidas[0]); // result: { imagesUrl: string[] }
 
             console.log("Imagem enviada para classificação, Aguarde...");
 
             // Envia .tiff para a classificação
-            const imagesClassificadasPath = await classificarImageUseCase.execute(imagesDownloadPath,imagensRecebidas[0].geometry);
+            const imagesClassificadasPath = await classificarImageUseCase.execute(imagesDownloadPath, imagensRecebidas[0].geometry);
 
 
             return res.status(200).json(imagesClassificadasPath);

@@ -1,17 +1,23 @@
-import { BuscarImageRepository, BuscarImageResponse } from "@/repository/BuscarImage";
+import { BuscarImageRepository, BuscarImageRequest, BuscarImageResponse } from "@/repository/BuscarImage";
 
 
+ interface BuscarImageCoordRequest {
+    imageName: String;
+    geometry: {
+      type: "Polygon";
+      coordinates: [number, number][][];
+    }
+  }
+  
 export class BuscarImageUseCase {
     constructor(private buscarImageRepository: BuscarImageRepository) { }
 
-    async execute(imageName: String): Promise<BuscarImageResponse | null> {
+    async execute({imageName,geometry}:BuscarImageCoordRequest): Promise<BuscarImageResponse | null> {
 
         let postData = imageName.split("_");
 
 
         let input = postData[3];
-        let xcoord = postData[4];
-        let ycoord = postData[5];
 
         const year = input.substring(0, 4);
         const month = input.substring(4, 6);
@@ -20,10 +26,10 @@ export class BuscarImageUseCase {
         // Format to dd/MM/yyyy
         const formattedDate = `${day}/${month}/${year}`;
 
-        const imageFound = await this.buscarImageRepository.buscarImage({ xcoord, ycoord, date: formattedDate });
+        const imageFound = await this.buscarImageRepository.buscarImage({ date: formattedDate,geometry });
 
         if (imageFound) {
-            return { imageUrl: imageFound.imageUrl }
+            return imageFound
         }
         else {
             return null
