@@ -1,30 +1,34 @@
-import ImagemClassificadaModel from "@/models/ImagemClassificadaModel";
+import ImagemClassificadaModel, { ImagemClassificada } from "@/models/ImagemClassificadaModel";
 
 export interface BuscarImageResponse {
-  imageUrl: string;
+  image: ImagemClassificada;
 }
 
 export interface BuscarImageRequest {
-  xcoord: string;
-  ycoord: string;
   date: string;
+  geometry: {
+    type: "Polygon";
+    coordinates: [number, number][][];
+  }
 }
 
 export class BuscarImageRepository {
 
-  async buscarImage({ xcoord, ycoord, date }: BuscarImageRequest): Promise<BuscarImageResponse | null> {
-
-    console.log("BUSCANDO IMAGEM",xcoord,ycoord,date);
+  async buscarImage({ date, geometry }: BuscarImageRequest): Promise<BuscarImageResponse | null> {
 
     const imageUrl = await ImagemClassificadaModel.findOne({
-      where: { xcoord, ycoord, date }
+      date,
+      geometry: {
+        $geoIntersects: {
+          $geometry: geometry
+        }
+      }
     });
-    
 
-    console.log("RESULTADO DA BUSCA FINDONE",imageUrl)
+    console.log("RESULTADO DA BUSCA FINDONE", imageUrl)
 
-    if (imageUrl?.image) {
-      return { imageUrl: imageUrl.image }
+    if (imageUrl?.$isValid) {
+      return { image: imageUrl }
     }
     else {
       return null;
