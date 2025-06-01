@@ -76,7 +76,7 @@ const Sidebar: React.FC<Props> = ({ onDateChange, onRegionChange }) => {
 
                         {showOccurrences && (
                             <View style={{ marginBottom: 20 }}>
-                                {Array.from({ length: 10 }).map((_, idx) => (
+                                {Array.from({ length: 5 }).map((_, idx) => (
                                     <OccurrenceCard
                                         key={idx}
                                         region="São Paulo - SP"
@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
     },
     menuContent: {
         paddingLeft: 10,
+        paddingBottom: 130,
     },
     item: {
         flexDirection: 'row',
