@@ -78,7 +78,7 @@ const Map: React.FC<MapProps> = ({
   useEffect(() => {
     const fetchClassifiedImages = async () => {
       try {
-        const response = await fetch("http://localhost:3010/api/classified");
+        const response = await fetch("http://localhost:3010/api/list");
         const data = await response.json();
         setClassifiedImages(data);
       } catch (error) {
@@ -191,20 +191,40 @@ const Map: React.FC<MapProps> = ({
           ([lng, lat]) => [lat, lng] as [number, number]
         );
 
+        const bounds = L.latLngBounds(coords)
+          .toBBoxString()
+          .split(",")
+          .map(Number);
+        const imageUrl =
+          "http://localhost:3333/classified-images/classified_image.png";
+
         return (
-          <Polygon key={img._id} positions={coords} color="red">
-            <Popup>
-              <div>
-                <strong>Data:</strong> {img.date} <br />
-                <strong>Coords:</strong> ({img.xcoord}, {img.ycoord}) <br />
-                <img
-                  src={`http://localhost:3010/classified-images/${img.image}`}
-                  alt="Classificada"
-                  style={{ width: "100px", height: "auto" }}
-                />
-              </div>
-            </Popup>
-          </Polygon>
+          <React.Fragment key={img._id}>
+            {/* Polígono vermelho */}
+            <Polygon positions={coords} color="red">
+              <Popup>
+                <div>
+                  <strong>Data:</strong> {img.date} <br />
+                  <strong>Coords:</strong> ({img.xcoord}, {img.ycoord}) <br />
+                  <img
+                    src={imageUrl}
+                    alt="Classificada"
+                    style={{ width: "100px", height: "auto" }}
+                  />
+                </div>
+              </Popup>
+            </Polygon>
+
+            {/* Overlay da imagem classificada */}
+            <ImageOverlay
+              url={imageUrl}
+              bounds={[
+                [bounds[1], bounds[0]], // [latMin, lngMin]
+                [bounds[3], bounds[2]], // [latMax, lngMax]
+              ]}
+              opacity={0.5}
+            />
+          </React.Fragment>
         );
       })}
 
