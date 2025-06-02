@@ -16,7 +16,7 @@ const App: React.FC = () => {
     console.log("🖼️ Imagens selecionadas:", selectedImages);
 
     try {
-      const response = await axios.post("http://localhost:3010/api/list", {
+      const response = await axios.post("http://localhost:3010/api/search", {
         images: selectedImages.map((img) => ({
           id: img.id,
           datetime: img.datetime,

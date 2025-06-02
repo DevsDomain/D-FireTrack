@@ -186,8 +186,17 @@ const Map: React.FC<MapProps> = ({
         />
       )}
 
-      {classifiedImages.map((img) => {
-        const coords = img.geometry.coordinates[0].map(
+      {(() => {
+        if (classifiedImages.length === 0) return null;
+
+        // Ordena as imagens por data decrescente
+        const sortedImages = [...classifiedImages].sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+
+        const latestImage = sortedImages[0];
+
+        const coords = latestImage.geometry.coordinates[0].map(
           ([lng, lat]) => [lat, lng] as [number, number]
         );
 
@@ -195,17 +204,18 @@ const Map: React.FC<MapProps> = ({
           .toBBoxString()
           .split(",")
           .map(Number);
+
         const imageUrl =
           "http://localhost:3333/classified-images/classified_image.png";
 
         return (
-          <React.Fragment key={img._id}>
-            {/* Polígono vermelho */}
+          <React.Fragment key={latestImage._id}>
             <Polygon positions={coords} color="red">
               <Popup>
                 <div>
-                  <strong>Data:</strong> {img.date} <br />
-                  <strong>Coords:</strong> ({img.xcoord}, {img.ycoord}) <br />
+                  <strong>Data:</strong> {latestImage.date} <br />
+                  <strong>Coords:</strong> ({latestImage.xcoord},{" "}
+                  {latestImage.ycoord}) <br />
                   <img
                     src={imageUrl}
                     alt="Classificada"
@@ -215,18 +225,17 @@ const Map: React.FC<MapProps> = ({
               </Popup>
             </Polygon>
 
-            {/* Overlay da imagem classificada */}
             <ImageOverlay
               url={imageUrl}
               bounds={[
-                [bounds[1], bounds[0]], // [latMin, lngMin]
-                [bounds[3], bounds[2]], // [latMax, lngMax]
+                [bounds[1], bounds[0]],
+                [bounds[3], bounds[2]],
               ]}
               opacity={0.5}
             />
           </React.Fragment>
         );
-      })}
+      })()}
 
       <FitBounds polygons={classifiedImages} />
 

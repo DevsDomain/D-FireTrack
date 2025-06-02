@@ -1,21 +1,44 @@
-import React from 'react';
-import DownloadIcon from '@mui/icons-material/Download';
-import styles from './Sidebar.module.css';
+import React from "react";
+import DownloadIcon from "@mui/icons-material/Download";
+import MapIcon from "@mui/icons-material/Map";
+import styles from "./Sidebar.module.css";
 
 interface Props {
-  region: string;
   date: string;
-  hectares: string;
-  description: string;
+  xcoord: string;
+  ycoord: string;
+  imageUrl: string;
+  onShowOnMap: () => void;
 }
 
-const OccurrenceCard: React.FC<Props> = ({ region, date, hectares, description }) => {
+const OccurrenceCard: React.FC<Props> = ({
+  date,
+  xcoord,
+  ycoord,
+  imageUrl,
+  onShowOnMap,
+}) => {
+  const handleDownload = () => {
+    const link = document.createElement("a");
+    link.href = imageUrl;
+    link.download = "classified_image.png";
+    link.click();
+  };
+
   return (
     <div className={styles.card}>
-      <h2>{region}</h2>
-      <p>{date} - {hectares} hectares</p>
-      <p className={styles.description}>{description}</p>
-      <button className={styles.download}><DownloadIcon fontSize="small" /> Download</button>
+      <h2>
+        Órbita Ponto: {xcoord}, {ycoord}
+      </h2>
+      <p>Data: {date}</p>
+      <div className={styles.cardActions}>
+        <button className={styles.download} onClick={handleDownload}>
+          <DownloadIcon fontSize="small" /> Download
+        </button>
+        <button className={styles.mapButton} onClick={onShowOnMap}>
+          <MapIcon fontSize="small" /> Ver no Mapa
+        </button>
+      </div>
     </div>
   );
 };
