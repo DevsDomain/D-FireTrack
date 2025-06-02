@@ -3,20 +3,31 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import TopMenu from "../components/TopMenu";
 import Home from "../pages/Home";
 import "../styles/global.css";
-import Gallery from "../components/Gallery";
+import Gallery, { ImageItem } from "../components/Gallery";
 import axios from "axios";
 import Sidebar from "../components/Sidebar/Sidebar";
+import { ClassifiedImagesProvider } from "../contexts/ClassifiedImagesContext";
 
 const App: React.FC = () => {
   const [bbox, setBbox] = useState<string>("-60.1,-3.2,-48.4,-1.4"); // Inicializa com algum valor padrão
   const [datetime, setDatetime] = useState<string>("2024-03-01/2024-12-31");
 
-  const handleSelect = async (selectedIds: string[]) => {
-    console.log("🖼️ Imagens selecionadas:", selectedIds);
-    const response = await axios.post("http://localhost:3010/api/search", {
-      imagesId: selectedIds,
-    });
-    console.log(response);
+  const handleSelect = async (selectedImages: ImageItem[]) => {
+    console.log("🖼️ Imagens selecionadas:", selectedImages);
+
+    try {
+      const response = await axios.post("http://localhost:3010/api/search", {
+        images: selectedImages.map((img) => ({
+          id: img.id,
+          datetime: img.datetime,
+          geometry: img.geometry,
+        })),
+      });
+
+      console.log("✅ Enviado com sucesso:", response.data);
+    } catch (error) {
+      console.error("❌ Erro ao enviar imagens:", error);
+    }
   };
 
   const handleDateChange = (dates: [Date | null, Date | null]) => {
@@ -39,34 +50,36 @@ const App: React.FC = () => {
   };
 
   return (
-    <Router>
-      <div className="app-container">
-        <TopMenu />
-        <div className="content">
-          <Sidebar
-            onDateChange={handleDateChange}
-            onRegionChange={handleRegionChange}
-          />
-          <div className="main-content">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/home" element={<Home />} />
-              <Route
-                path="/gallery"
-                element={
-                  <Gallery
-                    collection="CB4-WFI-L4-SR-1"
-                    bbox={bbox}
-                    datetime={datetime}
-                    onSelect={handleSelect}
-                  />
-                }
-              />
-            </Routes>
+    <ClassifiedImagesProvider>
+      <Router>
+        <div className="app-container">
+          <TopMenu />
+          <div className="content">
+            <Sidebar
+              onDateChange={handleDateChange}
+              onRegionChange={handleRegionChange}
+            />
+            <div className="main-content">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/home" element={<Home />} />
+                <Route
+                  path="/gallery"
+                  element={
+                    <Gallery
+                      collection="CB4-WFI-L4-SR-1"
+                      bbox={bbox}
+                      datetime={datetime}
+                      onSelect={handleSelect}
+                    />
+                  }
+                />
+              </Routes>
+            </div>
           </div>
         </div>
-      </div>
-    </Router>
+      </Router>
+    </ClassifiedImagesProvider>
   );
 };
 

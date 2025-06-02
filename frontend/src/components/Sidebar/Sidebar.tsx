@@ -13,13 +13,33 @@ import { Link } from "react-router-dom";
 interface SidebarProps {
   onDateChange: (dates: [Date | null, Date | null]) => void;
   onRegionChange: (latitude: string, longitude: string) => void;
+  onSelectImage?: (occurrence: any) => void; // <- para interagir com o mapa
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onDateChange, onRegionChange }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  onDateChange,
+  onRegionChange,
+  onSelectImage,
+}) => {
   const isMobile = useMediaQuery("(max-width:768px)");
   const [open, setOpen] = useState(true);
   const [schedulesOpen, setSchedulesOpen] = useState(false);
   const [occurrencesOpen, setOccurrencesOpen] = useState(false);
+  const [occurrences, setOccurrences] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchOccurrences = async () => {
+      try {
+        const res = await fetch("http://localhost:3010/api/list");
+        const data = await res.json();
+        setOccurrences(data);
+      } catch (err) {
+        console.error("Erro ao buscar ocorrências:", err);
+      }
+    };
+
+    fetchOccurrences();
+  }, []);
 
   useEffect(() => {
     setOpen(!isMobile);
@@ -54,8 +74,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onDateChange, onRegionChange }) => {
               <li
                 onClick={() => {
                   handleClose();
-                  setOccurrencesOpen(false); // Recolher Ocorrência
-                  setSchedulesOpen(false);   // Recolher Período
+                  setOccurrencesOpen(false);
+                  setSchedulesOpen(false);
                 }}
                 className={styles.clickableItem}
               >
@@ -103,13 +123,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onDateChange, onRegionChange }) => {
                 <li>
                   <div className={styles.sectionContent}>
                     <div className={styles.occurrencesScrollContainer}>
-                      {Array.from({ length: 10 }).map((_, idx) => (
+                      {occurrences.map((occ) => (
                         <OccurrenceCard
-                          key={idx}
-                          region="São Paulo - SP"
-                          date="15/08/2023"
-                          hectares="1250"
-                          description="Área de floresta afetada com queimadas externas afetando"
+                          key={occ._id}
+                          date={occ.date || "Data desconhecida"}
+                          xcoord={occ.xcoord || "?"}
+                          ycoord={occ.ycoord || "?"}
+                          imageUrl={`http://localhost:3333/classified-images/classified_image.png`}
+                          onShowOnMap={() => {
+                            if (onSelectImage) onSelectImage(occ);
+                            else console.log("Exibir no mapa:", occ);
+                          }}
                         />
                       ))}
                     </div>
