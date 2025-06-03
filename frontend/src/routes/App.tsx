@@ -31,13 +31,13 @@ const App: React.FC = () => {
       });
 
       console.log("✅ Enviado com sucesso:", response.data);
-      setProcessing(false); // Finaliza o processamento
-      setPercentage(100); // Define a porcentagem como 100% após o envio
+      setProcessing(false); // fd
+      setPercentage(100); // fd
       alert("ok.");
     } catch (error) {
       console.error("❌ Erro ao enviar imagens:", error);
-      setProcessing(false); // Finaliza o processamento mesmo em caso de erro
-      setPercentage(0); // Reseta a porcentagem em caso de erro
+      setProcessing(false); // fd
+      setPercentage(0); // fd
       alert("Erro ao processar as imagens selecionadas. Tente novamente.");
     }
   };
