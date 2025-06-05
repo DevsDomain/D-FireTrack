@@ -33,7 +33,7 @@ const App: React.FC = () => {
       console.log("✅ Enviado com sucesso:", response.data);
       setProcessing(false); // fd
       setPercentage(100); // fd
-      alert("ok.");
+      alert("Imagens baixadas com sucesso! Processamento iniciado.");
     } catch (error) {
       console.error("❌ Erro ao enviar imagens:", error);
       setProcessing(false); // fd
