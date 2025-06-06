@@ -14,8 +14,10 @@ export async function generateClassifiedImage(classificationMatrix: string[][], 
 
   // Define as cores para cada classe
   const classColors: Record<string, [number, number, number]> = {
-    Queimada: [255, 0, 0], // Vermelho
+    Queimada: [0, 0, 0], // Preto
     Vegetacao: [0, 255, 0], // Verde
+    Agua: [0, 0, 255], // Azul
+    Nuvem: [255, 255, 255], // Branco
   };
 
   for (let y = 0; y < height; y++) {
