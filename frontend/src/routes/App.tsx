@@ -13,7 +13,6 @@ const App: React.FC = () => {
   const [bbox, setBbox] = useState<string>("-60.1,-3.2,-48.4,-1.4"); // Inicializa com algum valor padrão
   const [datetime, setDatetime] = useState<string>("2024-03-01/2024-12-31");
   const [processing, setProcessing] = useState(false); //fd
-  const [percentage, setPercentage] = useState<number>(0); //fd
 
   const handleSelect = async (selectedImages: ImageItem[]) => {
 
@@ -21,7 +20,6 @@ const App: React.FC = () => {
 
     try {
       setProcessing(true); // Inicia o processamento
-      setPercentage(0); // Reseta a porcentagem
       const response = await axios.post("http://localhost:3010/api/search", {
         images: selectedImages.map((img) => ({
           id: img.id,
@@ -32,12 +30,10 @@ const App: React.FC = () => {
 
       console.log("✅ Enviado com sucesso:", response.data);
       setProcessing(false); // fd
-      setPercentage(100); // fd
-      alert("Imagens baixadas com sucesso! Processamento iniciado.");
+      alert("Imagens processadas com sucesso!");
     } catch (error) {
       console.error("❌ Erro ao enviar imagens:", error);
       setProcessing(false); // fd
-      setPercentage(0); // fd
       alert("Erro ao processar as imagens selecionadas. Tente novamente.");
     }
   };
@@ -89,7 +85,11 @@ const App: React.FC = () => {
             </div>
           </div>
         </div>
-        {processing && <ProcessingOverlay message="Processando imagens selecionadas..." />}
+        {processing && (
+          <ProcessingOverlay
+            message="Baixando e Processando imagens selecionadas..."
+          />
+        )}
       </Router>
     </ClassifiedImagesProvider>
   );
