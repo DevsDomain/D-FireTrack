@@ -35,7 +35,13 @@ const OccurrenceCard: React.FC<Props> = ({
         <button className={styles.download} onClick={handleDownload}>
           <DownloadIcon fontSize="small" /> Download
         </button>
-        <button className={styles.mapButton} onClick={onShowOnMap}>
+        <button
+          className={styles.mapButton}
+          onClick={() => {
+            console.log("📍 Clicado botão Ver no Mapa");
+            onShowOnMap();
+          }}
+        >
           <MapIcon fontSize="small" /> Ver no Mapa
         </button>
       </div>

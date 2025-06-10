@@ -72,12 +72,21 @@ const App: React.FC = () => {
             <Sidebar
               onDateChange={handleDateChange}
               onRegionChange={handleRegionChange}
-              onSelectImage={(occ) => setSelectedOccurrence(occ)}
+              onSelectImage={(occ) => {
+                console.log("🟢 Ocorrência selecionada no App:", occ);
+                setSelectedOccurrence(occ);
+              }}
             />
             <div className="main-content">
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/home" element={<Home />} />
+                <Route
+                  path="/"
+                  element={<Home selectedOccurrence={selectedOccurrence} />}
+                />
+                <Route
+                  path="/home"
+                  element={<Home selectedOccurrence={selectedOccurrence} />}
+                />
                 <Route
                   path="/gallery"
                   element={

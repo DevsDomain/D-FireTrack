@@ -1,7 +1,12 @@
+// Home.tsx
 import React, { useState } from "react";
-import Map from "../components/Map";
+import Map, { ClassifiedDBImage } from "../components/Map";
 
-const Home = () => {
+interface HomeProps {
+  selectedOccurrence: ClassifiedDBImage | null;
+}
+
+const Home: React.FC<HomeProps> = ({ selectedOccurrence }) => {
   const [selectedDates, setSelectedDates] = useState<
     [Date | null, Date | null]
   >([null, null]);
@@ -9,7 +14,6 @@ const Home = () => {
     lat: number;
     lng: number;
   } | null>(null);
-  const [selectedOccurrence, setSelectedOccurrence] = useState(null);
 
   return (
     <div
