@@ -18,12 +18,9 @@ class ClassifierController {
     const ndviMatrixPath = path.join(basePath, 'ndvi_matrix.json');
     const ndviImagePath = path.join(basePath, 'ndvi_image.png');
     const classificationOutputPath = path.join(basePath, 'classification.json');
-    const classifiedImagePath = path.join(basePath, 'classified_image.png');
-
 
     try {
       const { redPath, nirPath } = req.body;
-
 
       console.log("REDPATH recebido", redPath);
       console.log("nirPath recebido", nirPath);
@@ -31,6 +28,11 @@ class ClassifierController {
       if (!fs.existsSync(basePath)) {
         fs.mkdirSync(basePath, { recursive: true });
       }
+
+      const redImageName = path.basename(redPath);
+      const underscoreIndex = redImageName.lastIndexOf("_");
+      const newImageName = underscoreIndex >= 0 ? redImageName.slice(0, underscoreIndex) : redImageName;
+      const classifiedImagePath = path.join(basePath, `${newImageName}_classified.png`);
 
       console.log('Calculando NDVI...');
       const { ndvi } = await processNDVIFromLocalFiles(redPath, nirPath);
@@ -53,6 +55,7 @@ class ClassifierController {
       res.status(200).json({imageUrl:caminhoDaImagemClassificada});
     } catch (error) {
       console.error('Erro:', error);
+      res.status(500).json({ error: 'Erro ao processar a imagem.' });
     }
   }
 }
