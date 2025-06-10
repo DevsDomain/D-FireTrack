@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/pt-br";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -15,9 +15,10 @@ import { useNavigate } from "react-router-dom";
 interface DateAndCoordinateFilterProps {
   onDateChange: (dates: [Date | null, Date | null]) => void;
   onRegionChange: (lat: string, lng: string) => void;
+  externalLat?: string;
+  externalLng?: string;
 }
 
-// Estilizando o container principal
 const StyledContainer = styled(Box)(({ theme }) => ({
   overflow: "hidden",
   padding: theme.spacing(2),
@@ -36,7 +37,6 @@ const StyledContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
-// Estilizando os TextFields dos DatePickers
 const StyledTextFieldProps = {
   fullWidth: true,
   size: "small" as "small",
@@ -64,7 +64,6 @@ const StyledTextFieldProps = {
   },
 };
 
-// Estilizando os inputs de Latitude e Longitude
 const CoordinateInputs = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -98,23 +97,33 @@ const SubmitButton = styled(Button)(({ theme }) => ({
 export default function DateAndCoordinateFilter({
   onDateChange,
   onRegionChange,
+  externalLat,
+  externalLng,
 }: DateAndCoordinateFilterProps) {
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const navigate = useNavigate(); // 👈 INICIALIZA O HOOK
-
+  const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:768px)");
+
+  useEffect(() => {
+    if (externalLat) setLatitude(externalLat);
+    if (externalLng) setLongitude(externalLng);
+  }, [externalLat, externalLng]);
 
   const handleSubmit = () => {
     if (startDate && endDate && latitude && longitude) {
       onDateChange([startDate.toDate(), endDate.toDate()]);
       onRegionChange(latitude, longitude);
-      navigate("/gallery"); // 👈 NAVEGA PARA A GALERIA
+      navigate("/gallery");
     } else {
       alert("Por favor, preencha todos os campos!");
     }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleSubmit();
   };
 
   return (
@@ -162,12 +171,14 @@ export default function DateAndCoordinateFilter({
             placeholder="Latitude"
             value={latitude}
             onChange={(e) => setLatitude(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
           <InputField
             type="text"
             placeholder="Longitude"
             value={longitude}
             onChange={(e) => setLongitude(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
         </CoordinateInputs>
 

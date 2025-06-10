@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Sidebar from "./../src/components/Sidebar/Sidebar";
+import Sidebar from "./components/Sidebar/Sidebar";
 import TopMenu from "./components/TopMenu";
 import Home from "./pages/Home";
-
-import "./styles/global.css"; // Arquivo de estilos
+import Gallery from "./components/Gallery";
+import "./styles/global.css";
 
 const App: React.FC = () => {
-  const [bbox, setBbox] = useState<string>("-60.1,-3.2,-48.4,-1.4"); // Inicializa com algum valor padrão
+  const [bbox, setBbox] = useState<string>("-60.1,-3.2,-48.4,-1.4");
   const [datetime, setDatetime] = useState<string>("2024-03-01/2024-12-31");
+  const [lat, setLat] = useState("");
+  const [lng, setLng] = useState("");
 
   const handleDateChange = (dates: [Date | null, Date | null]) => {
     if (dates[0] && dates[1]) {
@@ -19,14 +21,24 @@ const App: React.FC = () => {
   };
 
   const handleRegionChange = (latitude: string, longitude: string) => {
-    // Aqui vamos criar uma bounding box de exemplo baseada na latitude e longitude
-    const lat = parseFloat(latitude);
-    const lon = parseFloat(longitude);
-    const delta = 0.5; // Exemplo: meio grau para cima/baixo/direita/esquerda
-    const bboxString = `${lon - delta},${lat - delta},${lon + delta},${
-      lat + delta
-    }`;
+    setLat(latitude);
+    setLng(longitude);
+    const delta = 0.5;
+    const latNum = parseFloat(latitude);
+    const lngNum = parseFloat(longitude);
+    const bboxString = `${lngNum - delta},${latNum - delta},${lngNum + delta},${latNum + delta}`;
     setBbox(bboxString);
+  };
+
+  const handleRectangleDrawn = (bbox: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+  }) => {
+    const centerLat = ((bbox.north + bbox.south) / 2).toFixed(6);
+    const centerLng = ((bbox.east + bbox.west) / 2).toFixed(6);
+    handleRegionChange(centerLat, centerLng);
   };
 
   return (
@@ -37,10 +49,13 @@ const App: React.FC = () => {
           <Sidebar
             onDateChange={handleDateChange}
             onRegionChange={handleRegionChange}
+            externalLat={lat}
+            externalLng={lng}
           />
           <div className="main-content">
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/home" element={<Home onRectangleDrawn={handleRectangleDrawn} />} />
+              <Route path="/gallery" element={<Gallery collection="CB4-WFI-L4-SR-1" bbox={bbox} datetime={datetime} onSelect={() => {}} />} />
             </Routes>
           </div>
         </div>

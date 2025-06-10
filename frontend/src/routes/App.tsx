@@ -10,18 +10,19 @@ import ProcessingOverlay from "../components/Processing/ProcessingOverlay";
 import { ClassifiedImagesProvider } from "../contexts/ClassifiedImagesContext";
 
 const App: React.FC = () => {
-  const [bbox, setBbox] = useState<string>("-60.1,-3.2,-48.4,-1.4"); // Inicializa com algum valor padrão
+  const [bbox, setBbox] = useState<string>("-60.1,-3.2,-48.4,-1.4");
   const [datetime, setDatetime] = useState<string>("2024-03-01/2024-12-31");
-  const [processing, setProcessing] = useState(false); //fd
-  const [percentage, setPercentage] = useState<number>(0); //fd
+  const [processing, setProcessing] = useState(false);
+  const [percentage, setPercentage] = useState<number>(0);
+
+  const [lat, setLat] = useState("");
+  const [lng, setLng] = useState("");
 
   const handleSelect = async (selectedImages: ImageItem[]) => {
-
     console.log("🖼️ Imagens selecionadas:", selectedImages);
-
     try {
-      setProcessing(true); // Inicia o processamento
-      setPercentage(0); // Reseta a porcentagem
+      setProcessing(true);
+      setPercentage(0);
       const response = await axios.post("http://localhost:3010/api/search", {
         images: selectedImages.map((img) => ({
           id: img.id,
@@ -31,13 +32,13 @@ const App: React.FC = () => {
       });
 
       console.log("✅ Enviado com sucesso:", response.data);
-      setProcessing(false); // fd
-      setPercentage(100); // fd
+      setProcessing(false);
+      setPercentage(100);
       alert("Imagens baixadas com sucesso! Processamento iniciado.");
     } catch (error) {
       console.error("❌ Erro ao enviar imagens:", error);
-      setProcessing(false); // fd
-      setPercentage(0); // fd
+      setProcessing(false);
+      setPercentage(0);
       alert("Erro ao processar as imagens selecionadas. Tente novamente.");
     }
   };
@@ -51,13 +52,24 @@ const App: React.FC = () => {
   };
 
   const handleRegionChange = (latitude: string, longitude: string) => {
-    // Aqui vamos criar uma bounding box de exemplo baseada na latitude e longitude
-    const lat = parseFloat(latitude);
-    const lon = parseFloat(longitude);
-    const delta = 0.5; // Exemplo: meio grau para cima/baixo/direita/esquerda
-    const bboxString = `${lon - delta},${lat - delta},${lon + delta},${lat + delta
-      }`;
+    setLat(latitude);
+    setLng(longitude);
+    const latNum = parseFloat(latitude);
+    const lonNum = parseFloat(longitude);
+    const delta = 0.5;
+    const bboxString = `${lonNum - delta},${latNum - delta},${lonNum + delta},${latNum + delta}`;
     setBbox(bboxString);
+  };
+
+  const handleRectangleDrawn = (bbox: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+  }) => {
+    const centerLat = ((bbox.north + bbox.south) / 2).toFixed(6);
+    const centerLng = ((bbox.east + bbox.west) / 2).toFixed(6);
+    handleRegionChange(centerLat, centerLng);
   };
 
   return (
@@ -69,11 +81,19 @@ const App: React.FC = () => {
             <Sidebar
               onDateChange={handleDateChange}
               onRegionChange={handleRegionChange}
+              externalLat={lat}
+              externalLng={lng}
             />
             <div className="main-content">
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/home" element={<Home />} />
+                <Route
+                  path="/"
+                  element={<Home onRectangleDrawn={handleRectangleDrawn} />}
+                />
+                <Route
+                  path="/home"
+                  element={<Home onRectangleDrawn={handleRectangleDrawn} />}
+                />
                 <Route
                   path="/gallery"
                   element={
@@ -89,7 +109,9 @@ const App: React.FC = () => {
             </div>
           </div>
         </div>
-        {processing && <ProcessingOverlay message="Processando imagens selecionadas..." />}
+        {processing && (
+          <ProcessingOverlay message="Processando imagens selecionadas..." />
+        )}
       </Router>
     </ClassifiedImagesProvider>
   );
