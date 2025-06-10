@@ -24,9 +24,10 @@ interface MapProps {
     east: number;
     west: number;
   }) => void;
+  selectedOccurrence?: ClassifiedDBImage | null;
 }
 
-interface ClassifiedDBImage {
+export interface ClassifiedDBImage {
   _id: string;
   image: string;
   xcoord: number;
@@ -74,6 +75,8 @@ const Map: React.FC<MapProps> = ({
   const [classifiedImages, setClassifiedImages] = useState<ClassifiedDBImage[]>(
     []
   );
+  const [selectedOccurrence, setSelectedOccurrence] =
+    useState<ClassifiedDBImage | null>(null);
 
   useEffect(() => {
     const fetchClassifiedImages = async () => {
@@ -186,56 +189,80 @@ const Map: React.FC<MapProps> = ({
         />
       )}
 
-      {(() => {
-        if (classifiedImages.length === 0) return null;
+      {selectedOccurrence ? (
+        <React.Fragment key={selectedOccurrence._id}>
+          <Polygon
+            positions={selectedOccurrence.geometry.coordinates[0].map(
+              ([lng, lat]) => [lat, lng] as [number, number]
+            )}
+            color="red"
+          >
+            <Popup>
+              <div>
+                <strong>Data:</strong> {selectedOccurrence.date} <br />
+                <strong>Órbita/Ponto:</strong> ({selectedOccurrence.xcoord},{" "}
+                {selectedOccurrence.ycoord}) <br />
+                <img
+                  src={`http://localhost:3333/classified-images/classified_image.png`}
+                  alt="Classificada"
+                  style={{ width: "100px", height: "auto" }}
+                />
+              </div>
+            </Popup>
+          </Polygon>
 
-        // Ordena as imagens por data decrescente
-        const sortedImages = [...classifiedImages].sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
+          <ImageOverlay
+            url={`http://localhost:3333/classified-images/classified_image.png`}
+            bounds={selectedOccurrence.geometry.coordinates[0].map(
+              ([lng, lat]) => [lat, lng] as [number, number]
+            )}
+            opacity={0.5}
+          />
+        </React.Fragment>
+      ) : classifiedImages.length > 0 ? (
+        // Mantenha a lógica original para mostrar a última imagem se nenhuma for selecionada
+        (() => {
+          const sortedImages = [...classifiedImages].sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          );
+          const latestImage = sortedImages[0];
+          const coords = latestImage.geometry.coordinates[0].map(
+            ([lng, lat]) => [lat, lng] as [number, number]
+          );
+          const bounds = L.latLngBounds(coords)
+            .toBBoxString()
+            .split(",")
+            .map(Number);
 
-        const latestImage = sortedImages[0];
+          return (
+            <React.Fragment key={latestImage._id}>
+              <Polygon positions={coords} color="red">
+                <Popup>
+                  <div>
+                    <strong>Data:</strong> {latestImage.date} <br />
+                    <strong>Coords:</strong> ({latestImage.xcoord},{" "}
+                    {latestImage.ycoord}) <br />
+                    <img
+                      src={`http://localhost:3333/classified-images/classified_image.png`}
+                      alt="Classificada"
+                      style={{ width: "100px", height: "auto" }}
+                    />
+                  </div>
+                </Popup>
+              </Polygon>
 
-        const coords = latestImage.geometry.coordinates[0].map(
-          ([lng, lat]) => [lat, lng] as [number, number]
-        );
-
-        const bounds = L.latLngBounds(coords)
-          .toBBoxString()
-          .split(",")
-          .map(Number);
-
-        const imageUrl =
-          "http://localhost:3333/classified-images/classified_image.png";
-
-        return (
-          <React.Fragment key={latestImage._id}>
-            <Polygon positions={coords} color="red">
-              <Popup>
-                <div>
-                  <strong>Data:</strong> {latestImage.date} <br />
-                  <strong>Coords:</strong> ({latestImage.xcoord},{" "}
-                  {latestImage.ycoord}) <br />
-                  <img
-                    src={imageUrl}
-                    alt="Classificada"
-                    style={{ width: "100px", height: "auto" }}
-                  />
-                </div>
-              </Popup>
-            </Polygon>
-
-            <ImageOverlay
-              url={imageUrl}
-              bounds={[
-                [bounds[1], bounds[0]],
-                [bounds[3], bounds[2]],
-              ]}
-              opacity={0.5}
-            />
-          </React.Fragment>
-        );
-      })()}
+              <ImageOverlay
+                url={`http://localhost:3333/classified-images/classified_image.png`}
+                bounds={[
+                  [bounds[1], bounds[0]],
+                  [bounds[3], bounds[2]],
+                ]}
+                opacity={0.5}
+              />
+            </React.Fragment>
+          );
+        })()
+      ) : null}
 
       <FitBounds polygons={classifiedImages} />
 

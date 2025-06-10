@@ -26,6 +26,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [schedulesOpen, setSchedulesOpen] = useState(false);
   const [occurrencesOpen, setOccurrencesOpen] = useState(false);
   const [occurrences, setOccurrences] = useState<any[]>([]);
+  const [selectedOccurrence, setSelectedOccurrence] = useState<any | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchOccurrences = async () => {
@@ -131,8 +134,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                           ycoord={occ.ycoord || "?"}
                           imageUrl={`http://localhost:3333/classified-images/classified_image.png`}
                           onShowOnMap={() => {
+                            setSelectedOccurrence(occ); // <<<<<< Atualiza o estado aqui
                             if (onSelectImage) onSelectImage(occ);
-                            else console.log("Exibir no mapa:", occ);
                           }}
                         />
                       ))}
