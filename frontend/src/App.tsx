@@ -5,10 +5,13 @@ import TopMenu from "./components/TopMenu";
 import Home from "./pages/Home";
 
 import "./styles/global.css"; // Arquivo de estilos
+import { ClassifiedDBImage } from "./components/Map";
 
 const App: React.FC = () => {
   const [bbox, setBbox] = useState<string>("-60.1,-3.2,-48.4,-1.4"); // Inicializa com algum valor padrão
   const [datetime, setDatetime] = useState<string>("2024-03-01/2024-12-31");
+  const [selectedOccurrence, setSelectedOccurrence] =
+    useState<ClassifiedDBImage | null>(null);
 
   const handleDateChange = (dates: [Date | null, Date | null]) => {
     if (dates[0] && dates[1]) {
@@ -40,7 +43,14 @@ const App: React.FC = () => {
           />
           <div className="main-content">
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route
+                path="/"
+                element={<Home selectedOccurrence={selectedOccurrence} />}
+              />
+              <Route
+                path="/home"
+                element={<Home selectedOccurrence={selectedOccurrence} />}
+              />
             </Routes>
           </div>
         </div>
