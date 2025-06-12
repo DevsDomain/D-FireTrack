@@ -9,10 +9,13 @@ import {
   useMap,
   ImageOverlay,
   Polygon,
+  FeatureGroup,
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { WMSTileLayer } from "react-leaflet";
+import { EditControl } from "react-leaflet-draw";
+import "leaflet-draw/dist/leaflet.draw.css";
 
 interface MapProps {
   selectedDates: [Date | null, Date | null];
@@ -24,6 +27,13 @@ interface MapProps {
     west: number;
   }) => void;
   selectedOccurrence?: ClassifiedDBImage | null;
+  onRectangleDrawn: (bbox: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+  }) => void;
+
 }
 
 export interface ClassifiedDBImage {
@@ -43,26 +53,21 @@ interface SatelliteImage {
   bounds: [[number, number], [number, number]];
 }
 
-// New interface for the overlay data
 interface OverlayData {
   bounds: L.LatLngBoundsExpression;
   imageUrl: string;
   polygonCoords: [number, number][];
-  occurrenceDate: string; // Add this to display in popup
-  occurrenceCoords: { x: string; y: string }; // Add this for popup
+  occurrenceDate: string;
+  occurrenceCoords: { x: string; y: string };
 }
 
-const FitBounds: React.FC<{ polygons: ClassifiedDBImage[] }> = ({
-  polygons,
-}) => {
+const FitBounds: React.FC<{ polygons: ClassifiedDBImage[] }> = ({ polygons }) => {
   const map = useMap();
 
   useEffect(() => {
     if (polygons.length > 0) {
       const allCoords = polygons.flatMap((img) =>
-        img.geometry.coordinates[0].map(
-          ([lng, lat]) => [lat, lng] as [number, number]
-        )
+        img.geometry.coordinates[0].map(([lng, lat]) => [lat, lng] as [number, number])
       );
       const bounds = L.latLngBounds(allCoords);
       map.fitBounds(bounds);
@@ -71,6 +76,8 @@ const FitBounds: React.FC<{ polygons: ClassifiedDBImage[] }> = ({
 
   return null;
 };
+
+
 
 const CenterMapOnOccurrence: React.FC<{
   occurrence: ClassifiedDBImage | null;
@@ -96,17 +103,25 @@ const Map: React.FC<MapProps> = ({
   selectedDates,
   onMouseMove,
   onBoundsChange,
+  onRectangleDrawn,
   selectedOccurrence,
 }) => {
-  const [satelliteImage, setSatelliteImage] = useState<SatelliteImage | null>(
-    null
-  );
-  const [classifiedImages, setClassifiedImages] = useState<ClassifiedDBImage[]>(
-    []
-  );
-  // New state for the active overlay
+  const [satelliteImage, setSatelliteImage] = useState<SatelliteImage | null>(null);
+  const [classifiedImages, setClassifiedImages] = useState<ClassifiedDBImage[]>([]);
   const [overlayData, setOverlayData] = useState<OverlayData | null>(null);
 
+  const handleDraw = (e: any) => {
+    const layer = e.layer;
+    if (layer instanceof L.Rectangle) {
+      const bounds = layer.getBounds();
+      onRectangleDrawn({
+        north: bounds.getNorth(),
+        south: bounds.getSouth(),
+        east: bounds.getEast(),
+        west: bounds.getWest(),
+      });
+    }
+  };
   useEffect(() => {
     const fetchClassifiedImages = async () => {
       try {
@@ -120,7 +135,6 @@ const Map: React.FC<MapProps> = ({
 
         setClassifiedImages(parsed);
 
-        // Optionally, set the initial overlay to the latest image if no selectedOccurrence is provided
         if (!selectedOccurrence && parsed.length > 0) {
           const sortedImages = [...parsed].sort(
             (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -134,22 +148,17 @@ const Map: React.FC<MapProps> = ({
           );
 
           const lngs = latestImage.geometry.coordinates[0].map(
-            (pair: [number, number]) => {
-              const [lng] = pair;
-              return lng;
-            }
+            (pair: [number, number]) => pair[0]
+          );
+          const lats = latestImage.geometry.coordinates[0].map(
+            (pair: [number, number]) => pair[1]
           );
 
-          const lats = latestImage.geometry.coordinates[0].map(
-            (pair: [number, number]) => {
-              const [, lat] = pair;
-              return lat;
-            }
-          );
           const bounds: [[number, number], [number, number]] = [
             [Math.min(...lats), Math.min(...lngs)],
             [Math.max(...lats), Math.max(...lngs)],
           ];
+
           setOverlayData({
             bounds,
             imageUrl: `http://localhost:3333/classified-images/${latestImage.image}`,
@@ -164,15 +173,11 @@ const Map: React.FC<MapProps> = ({
     };
 
     fetchClassifiedImages();
-  }, [selectedOccurrence]); // Add selectedOccurrence to dependency array to re-fetch if needed, or remove if you only want to fetch once
+  }, [selectedOccurrence]);
 
-  // This useEffect will handle updating the overlay data when selectedOccurrence changes
   useEffect(() => {
     if (selectedOccurrence) {
-      console.log(
-        "📥 selectedOccurrence recebida em <Map>:",
-        selectedOccurrence
-      );
+      console.log("📥 selectedOccurrence recebida em <Map>:", selectedOccurrence);
 
       const geometry = selectedOccurrence.geometry;
 
@@ -181,12 +186,9 @@ const Map: React.FC<MapProps> = ({
           ([lng, lat]) => [lat, lng] as [number, number]
         );
 
-        const lngs = selectedOccurrence.geometry.coordinates[0].map(
-          ([lng]) => lng
-        );
-        const lats = selectedOccurrence.geometry.coordinates[0].map(
-          ([, lat]) => lat
-        );
+        const lngs = geometry.coordinates[0].map(([lng]) => lng);
+        const lats = geometry.coordinates[0].map(([, lat]) => lat);
+
         const bounds: [[number, number], [number, number]] = [
           [Math.min(...lats), Math.min(...lngs)],
           [Math.max(...lats), Math.max(...lngs)],
@@ -194,7 +196,7 @@ const Map: React.FC<MapProps> = ({
 
         setOverlayData({
           bounds,
-          imageUrl: `http://localhost:3333/classified-images/${selectedOccurrence.image}`, // Ensure this URL is correct for your classified images server
+          imageUrl: `http://localhost:3333/classified-images/${selectedOccurrence.image}`,
           polygonCoords: coords,
           occurrenceDate: selectedOccurrence.date,
           occurrenceCoords: {
@@ -204,7 +206,6 @@ const Map: React.FC<MapProps> = ({
         });
       }
     } else {
-      // If selectedOccurrence is cleared, you might want to clear the overlay
       setOverlayData(null);
     }
   }, [selectedOccurrence]);
@@ -216,7 +217,7 @@ const Map: React.FC<MapProps> = ({
     popupAnchor: [0, -32],
   });
 
-  const MouseTracker = () => {
+ /*  const MouseTracker = () => {
     const map = useMap();
 
     useMapEvents({
@@ -235,7 +236,7 @@ const Map: React.FC<MapProps> = ({
 
     return null;
   };
-
+ */
   useEffect(() => {
     const fetchSatelliteImage = async () => {
       try {
@@ -283,8 +284,23 @@ const Map: React.FC<MapProps> = ({
         left: 0,
       }}
     >
-      <MouseTracker />
-      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+{/*       <MouseTracker />
+ */}      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+      <FeatureGroup>
+        <EditControl
+          position="topright"
+          onCreated={handleDraw}
+          draw={{
+            rectangle: true,
+            polygon: false,
+            polyline: false,
+            circle: false,
+            marker: false,
+            circlemarker: false,
+          }}
+        />
+      </FeatureGroup>
 
       <LayersControl position="topright">
         <LayersControl.Overlay checked name="Cbers 4">
@@ -306,11 +322,8 @@ const Map: React.FC<MapProps> = ({
         />
       )}
 
-      {/* Conditionally render the ImageOverlay and Polygon based on overlayData */}
       {overlayData && (
         <React.Fragment key={overlayData.imageUrl}>
-          {" "}
-          {/* Key helps force rerender */}
           <Polygon positions={overlayData.polygonCoords} color="red">
             <Popup>
               <div>
@@ -336,11 +349,6 @@ const Map: React.FC<MapProps> = ({
       {selectedOccurrence && (
         <CenterMapOnOccurrence occurrence={selectedOccurrence} />
       )}
-
-      {/* You might want to review when FitBounds is truly needed. 
-          If you're always centering on a selected occurrence, 
-          FitBounds on all classifiedImages might conflict or be redundant. */}
-      {/* <FitBounds polygons={classifiedImages} /> */}
 
       <Marker position={[-23.1896, -45.8841]} icon={markerIcon}>
         <Popup>São José dos Campos</Popup>

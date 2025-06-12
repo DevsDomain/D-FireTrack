@@ -32,6 +32,17 @@ const App: React.FC = () => {
     setBbox(bboxString);
   };
 
+  const handleRectangleDrawn = (bbox: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+  }) => {
+    const centerLat = ((bbox.north + bbox.south) / 2).toFixed(6);
+    const centerLng = ((bbox.east + bbox.west) / 2).toFixed(6);
+    handleRegionChange(centerLat, centerLng);
+  };
+
   return (
     <Router>
       <div className="app-container">
@@ -45,11 +56,11 @@ const App: React.FC = () => {
             <Routes>
               <Route
                 path="/"
-                element={<Home selectedOccurrence={selectedOccurrence} />}
+                element={<Home selectedOccurrence={selectedOccurrence} onRectangleDrawn={handleRectangleDrawn} />}
               />
               <Route
                 path="/home"
-                element={<Home selectedOccurrence={selectedOccurrence} />}
+                element={<Home selectedOccurrence={selectedOccurrence}  onRectangleDrawn={handleRectangleDrawn}/>}
               />
             </Routes>
           </div>

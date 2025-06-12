@@ -18,30 +18,21 @@ const OccurrenceCard: React.FC<Props> = ({
   imageUrl,
   onShowOnMap,
 }) => {
-  const handleDownload = () => {
-    const link = document.createElement("a");
-    link.href = imageUrl;
-    link.download = "classified_image.png";
-    link.click();
+  const handleOpenInNewTab = () => {
+    window.open(imageUrl, "_blank");
   };
 
   return (
     <div className={styles.card}>
-      <h2>
-        Órbita Ponto: {xcoord}, {ycoord}
-      </h2>
-      <p>Data: {date}</p>
+      <h2>Órbita Ponto: {xcoord}, {ycoord}</h2>
+      <p className={styles.description}>Data: {date}</p>
+      
       <div className={styles.cardActions}>
-        <button className={styles.download} onClick={handleDownload}>
-          <DownloadIcon fontSize="small" /> Download
+        <button className={styles.downloadBtn} onClick={handleOpenInNewTab}>
+          <DownloadIcon fontSize="small" /> Download 
         </button>
-        <button
-          className={styles.mapButton}
-          onClick={() => {
-            console.log("📍 Clicado botão Ver no Mapa");
-            onShowOnMap();
-          }}
-        >
+
+        <button className={styles.mapBtn} onClick={onShowOnMap}>
           <MapIcon fontSize="small" /> Ver no Mapa
         </button>
       </div>

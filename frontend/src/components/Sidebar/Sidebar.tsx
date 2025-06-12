@@ -13,8 +13,11 @@ import { Link } from "react-router-dom";
 interface SidebarProps {
   onDateChange: (dates: [Date | null, Date | null]) => void;
   onRegionChange: (latitude: string, longitude: string) => void;
-  onSelectImage?: (occurrence: any) => void; // <- para interagir com o mapa
+  onSelectImage?: (occurrence: any) => void;
+  externalLat?: string;
+  externalLng?: string;
 }
+
 
 interface Occurrence {
   _id: string;
@@ -32,6 +35,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   onDateChange,
   onRegionChange,
   onSelectImage,
+  externalLat,
+  externalLng,
 }) => {
   const isMobile = useMediaQuery("(max-width:768px)");
   const [open, setOpen] = useState(true);
@@ -128,8 +133,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <li>
                   <div className={styles.sectionContent}>
                     <DateAndCoordinateFilter
-                      onDateChange={onDateChange}
-                      onRegionChange={onRegionChange}
+                       onDateChange={onDateChange}
+                       onRegionChange={onRegionChange}
+                       externalLat={externalLat}
+                       externalLng={externalLng}
                     />
                   </div>
                 </li>

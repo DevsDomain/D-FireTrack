@@ -4,9 +4,15 @@ import Map, { ClassifiedDBImage } from "../components/Map";
 
 interface HomeProps {
   selectedOccurrence: ClassifiedDBImage | null;
+  onRectangleDrawn: (bbox: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+  }) => void;
 }
 
-const Home: React.FC<HomeProps> = ({ selectedOccurrence }) => {
+const Home: React.FC<HomeProps> = ({ selectedOccurrence,onRectangleDrawn }) => {
   const [selectedDates, setSelectedDates] = useState<
     [Date | null, Date | null]
   >([null, null]);
@@ -47,6 +53,7 @@ const Home: React.FC<HomeProps> = ({ selectedOccurrence }) => {
         selectedDates={selectedDates}
         onMouseMove={setMousePosition}
         selectedOccurrence={selectedOccurrence}
+        onRectangleDrawn={onRectangleDrawn}
       />
     </div>
   );

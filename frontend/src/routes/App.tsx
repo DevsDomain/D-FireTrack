@@ -16,7 +16,11 @@ const App: React.FC = () => {
   const [processing, setProcessing] = useState(false); //fd
   const [percentage, setPercentage] = useState<number>(0); //fd
   const [selectedOccurrence, setSelectedOccurrence] =
-    useState<ClassifiedDBImage | null>(null);
+   
+  useState<ClassifiedDBImage | null>(null);
+  const [lat, setLat] = useState("");
+  const [lng, setLng] = useState("");
+
 
   const handleSelect = async (selectedImages: ImageItem[]) => {
     console.log("🖼️ Imagens selecionadas:", selectedImages);
@@ -53,14 +57,24 @@ const App: React.FC = () => {
   };
 
   const handleRegionChange = (latitude: string, longitude: string) => {
-    // Aqui vamos criar uma bounding box de exemplo baseada na latitude e longitude
-    const lat = parseFloat(latitude);
-    const lon = parseFloat(longitude);
-    const delta = 0.5; // Exemplo: meio grau para cima/baixo/direita/esquerda
-    const bboxString = `${lon - delta},${lat - delta},${lon + delta},${
-      lat + delta
-    }`;
+    setLat(latitude);
+    setLng(longitude);
+    const latNum = parseFloat(latitude);
+    const lonNum = parseFloat(longitude);
+    const delta = 0.5;
+    const bboxString = `${lonNum - delta},${latNum - delta},${lonNum + delta},${latNum + delta}`;
     setBbox(bboxString);
+  };
+
+  const handleRectangleDrawn = (bbox: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+  }) => {
+    const centerLat = ((bbox.north + bbox.south) / 2).toFixed(6);
+    const centerLng = ((bbox.east + bbox.west) / 2).toFixed(6);
+    handleRegionChange(centerLat, centerLng);
   };
 
   return (
@@ -72,6 +86,8 @@ const App: React.FC = () => {
             <Sidebar
               onDateChange={handleDateChange}
               onRegionChange={handleRegionChange}
+              externalLat={lat}
+              externalLng={lng}
               onSelectImage={(occ) => {
                 console.log("🟢 Ocorrência selecionada no App:", occ);
                 setSelectedOccurrence(occ);
@@ -81,11 +97,11 @@ const App: React.FC = () => {
               <Routes>
                 <Route
                   path="/"
-                  element={<Home selectedOccurrence={selectedOccurrence} />}
+                  element={<Home selectedOccurrence={selectedOccurrence} onRectangleDrawn={handleRectangleDrawn} />}
                 />
                 <Route
                   path="/home"
-                  element={<Home selectedOccurrence={selectedOccurrence} />}
+                  element={<Home selectedOccurrence={selectedOccurrence} onRectangleDrawn={handleRectangleDrawn} />}
                 />
                 <Route
                   path="/gallery"
