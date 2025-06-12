@@ -8,14 +8,21 @@ import axios from "axios";
 import Sidebar from "../components/Sidebar/Sidebar";
 import ProcessingOverlay from "../components/Processing/ProcessingOverlay";
 import { ClassifiedImagesProvider } from "../contexts/ClassifiedImagesContext";
+import { ClassifiedDBImage } from "../components/Map";
 
 const App: React.FC = () => {
   const [bbox, setBbox] = useState<string>("-60.1,-3.2,-48.4,-1.4"); // Inicializa com algum valor padrão
   const [datetime, setDatetime] = useState<string>("2024-03-01/2024-12-31");
   const [processing, setProcessing] = useState(false); //fd
+  const [percentage, setPercentage] = useState<number>(0); //fd
+  const [selectedOccurrence, setSelectedOccurrence] =
+   
+  useState<ClassifiedDBImage | null>(null);
+  const [lat, setLat] = useState("");
+  const [lng, setLng] = useState("");
+
 
   const handleSelect = async (selectedImages: ImageItem[]) => {
-
     console.log("🖼️ Imagens selecionadas:", selectedImages);
 
     try {
@@ -47,13 +54,24 @@ const App: React.FC = () => {
   };
 
   const handleRegionChange = (latitude: string, longitude: string) => {
-    // Aqui vamos criar uma bounding box de exemplo baseada na latitude e longitude
-    const lat = parseFloat(latitude);
-    const lon = parseFloat(longitude);
-    const delta = 0.5; // Exemplo: meio grau para cima/baixo/direita/esquerda
-    const bboxString = `${lon - delta},${lat - delta},${lon + delta},${lat + delta
-      }`;
+    setLat(latitude);
+    setLng(longitude);
+    const latNum = parseFloat(latitude);
+    const lonNum = parseFloat(longitude);
+    const delta = 0.5;
+    const bboxString = `${lonNum - delta},${latNum - delta},${lonNum + delta},${latNum + delta}`;
     setBbox(bboxString);
+  };
+
+  const handleRectangleDrawn = (bbox: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+  }) => {
+    const centerLat = ((bbox.north + bbox.south) / 2).toFixed(6);
+    const centerLng = ((bbox.east + bbox.west) / 2).toFixed(6);
+    handleRegionChange(centerLat, centerLng);
   };
 
   return (
@@ -65,11 +83,23 @@ const App: React.FC = () => {
             <Sidebar
               onDateChange={handleDateChange}
               onRegionChange={handleRegionChange}
+              externalLat={lat}
+              externalLng={lng}
+              onSelectImage={(occ) => {
+                console.log("🟢 Ocorrência selecionada no App:", occ);
+                setSelectedOccurrence(occ);
+              }}
             />
             <div className="main-content">
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/home" element={<Home />} />
+                <Route
+                  path="/"
+                  element={<Home selectedOccurrence={selectedOccurrence} onRectangleDrawn={handleRectangleDrawn} />}
+                />
+                <Route
+                  path="/home"
+                  element={<Home selectedOccurrence={selectedOccurrence} onRectangleDrawn={handleRectangleDrawn} />}
+                />
                 <Route
                   path="/gallery"
                   element={
@@ -86,9 +116,7 @@ const App: React.FC = () => {
           </div>
         </div>
         {processing && (
-          <ProcessingOverlay
-            message="Baixando e Processando imagens selecionadas..."
-          />
+          <ProcessingOverlay message="Processando imagens selecionadas..." />
         )}
       </Router>
     </ClassifiedImagesProvider>

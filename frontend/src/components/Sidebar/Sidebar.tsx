@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styles from "./Sidebar.module.css";
 import OccurrenceCard from "./OccurrenceCard";
 import DateAndCoordinateFilter from "../DatePicker/DateAndCoordinateFilter";
@@ -13,26 +13,51 @@ import { Link } from "react-router-dom";
 interface SidebarProps {
   onDateChange: (dates: [Date | null, Date | null]) => void;
   onRegionChange: (latitude: string, longitude: string) => void;
-  onSelectImage?: (occurrence: any) => void; // <- para interagir com o mapa
+  onSelectImage?: (occurrence: any) => void;
+  externalLat?: string;
+  externalLng?: string;
+}
+
+
+interface Occurrence {
+  _id: string;
+  image: string;
+  xcoord: string;
+  ycoord: string;
+  date: string;
+  geometry: {
+    type: "Polygon";
+    coordinates: number[][][];
+  };
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
   onDateChange,
   onRegionChange,
   onSelectImage,
+  externalLat,
+  externalLng,
 }) => {
   const isMobile = useMediaQuery("(max-width:768px)");
   const [open, setOpen] = useState(true);
   const [schedulesOpen, setSchedulesOpen] = useState(false);
   const [occurrencesOpen, setOccurrencesOpen] = useState(false);
-  const [occurrences, setOccurrences] = useState<any[]>([]);
+  const [occurrences, setOccurrences] = useState<Occurrence[]>([]);
+  const [selectedOccurrence, setSelectedOccurrence] =
+    useState<Occurrence | null>(null);
 
   useEffect(() => {
     const fetchOccurrences = async () => {
       try {
         const res = await fetch("http://localhost:3010/api/list");
         const data = await res.json();
-        setOccurrences(data);
+
+        const parsed = data.map((occ: Occurrence) => ({
+          ...occ,
+          image: occ.image.split("/").pop() || "", // pega apenas o nome do arquivo
+        }));
+
+        setOccurrences(parsed);
       } catch (err) {
         console.error("Erro ao buscar ocorrências:", err);
       }
@@ -48,6 +73,14 @@ const Sidebar: React.FC<SidebarProps> = ({
   const handleClose = () => {
     if (isMobile) setOpen(false);
   };
+
+  const handleSelectOccurrence = useCallback(
+    (occ: Occurrence) => {
+      setSelectedOccurrence(occ);
+      if (onSelectImage) onSelectImage(occ);
+    },
+    [onSelectImage]
+  );
 
   return (
     <>
@@ -100,8 +133,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <li>
                   <div className={styles.sectionContent}>
                     <DateAndCoordinateFilter
-                      onDateChange={onDateChange}
-                      onRegionChange={onRegionChange}
+                       onDateChange={onDateChange}
+                       onRegionChange={onRegionChange}
+                       externalLat={externalLat}
+                       externalLng={externalLng}
                     />
                   </div>
                 </li>
@@ -129,10 +164,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                           date={occ.date || "Data desconhecida"}
                           xcoord={occ.xcoord || "?"}
                           ycoord={occ.ycoord || "?"}
-                          imageUrl={`http://localhost:3333/classified-images/classified_image.png`}
+                          imageUrl={`http://localhost:3333/classified-images/${occ.image}`}
                           onShowOnMap={() => {
+                            setSelectedOccurrence(occ); // <<<<<< Atualiza o estado aqui
                             if (onSelectImage) onSelectImage(occ);
-                            else console.log("Exibir no mapa:", occ);
                           }}
                         />
                       ))}

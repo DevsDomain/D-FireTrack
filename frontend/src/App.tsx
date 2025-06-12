@@ -5,10 +5,13 @@ import TopMenu from "./components/TopMenu";
 import Home from "./pages/Home";
 
 import "./styles/global.css"; // Arquivo de estilos
+import { ClassifiedDBImage } from "./components/Map";
 
 const App: React.FC = () => {
   const [bbox, setBbox] = useState<string>("-60.1,-3.2,-48.4,-1.4"); // Inicializa com algum valor padrão
   const [datetime, setDatetime] = useState<string>("2024-03-01/2024-12-31");
+  const [selectedOccurrence, setSelectedOccurrence] =
+    useState<ClassifiedDBImage | null>(null);
 
   const handleDateChange = (dates: [Date | null, Date | null]) => {
     if (dates[0] && dates[1]) {
@@ -29,6 +32,17 @@ const App: React.FC = () => {
     setBbox(bboxString);
   };
 
+  const handleRectangleDrawn = (bbox: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+  }) => {
+    const centerLat = ((bbox.north + bbox.south) / 2).toFixed(6);
+    const centerLng = ((bbox.east + bbox.west) / 2).toFixed(6);
+    handleRegionChange(centerLat, centerLng);
+  };
+
   return (
     <Router>
       <div className="app-container">
@@ -40,7 +54,14 @@ const App: React.FC = () => {
           />
           <div className="main-content">
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route
+                path="/"
+                element={<Home selectedOccurrence={selectedOccurrence} onRectangleDrawn={handleRectangleDrawn} />}
+              />
+              <Route
+                path="/home"
+                element={<Home selectedOccurrence={selectedOccurrence}  onRectangleDrawn={handleRectangleDrawn}/>}
+              />
             </Routes>
           </div>
         </div>
